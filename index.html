@@ -102,6 +102,9 @@
   .poop{position:fixed;z-index:7;pointer-events:none;transition:transform .6s cubic-bezier(.45,0,.7,1),opacity .5s;will-change:transform;}
   .pellet{width:16px;height:16px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#a9744a,#6e4422);box-shadow:0 1px 2px rgba(0,0,0,.3);}
   .nana{font-size:30px;filter:sepia(1) saturate(2.2) hue-rotate(-12deg) brightness(.58);}
+  .log{width:36px;height:17px;border-radius:9px;background:linear-gradient(180deg,#a9744a,#6e4422);box-shadow:0 1px 2px rgba(0,0,0,.3);}
+  .bigball{width:30px;height:30px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#9c6638,#5a3618);box-shadow:0 2px 3px rgba(0,0,0,.35);}
+  .splat{width:32px;height:16px;border-radius:55% 50% 60% 45%/65% 60% 45% 40%;background:radial-gradient(circle at 50% 38%,#ffffff,#e6e6dc);box-shadow:0 1px 2px rgba(0,0,0,.2);border:1px solid #dadaceaa;}
   .puddle{position:fixed;z-index:6;width:80px;height:20px;border-radius:50%;pointer-events:none;
     background:radial-gradient(circle at 50% 40%,#ffe66b,#f4c63a);opacity:.85;transform:scale(0);transition:transform .5s ease,opacity .5s ease;}
   .puddle.grow{transform:scale(1);}
@@ -240,14 +243,21 @@
   function updateWater(c){const n=Math.min(c.water||0,10);const g=c.gauges.water;g.querySelector(".gfill").style.width=(n*10)+"%";
     g.querySelector(".gtxt").textContent=`💧 ${n}/10`;g.classList.toggle("full",n>=10);}
   function dropPoop(c){const r=c.el.getBoundingClientRect();const baseX=r.left+r.width*0.5,topY=r.top+r.height*0.74,groundY=r.bottom-6;toot();
-    if(c.poop==="banana"){for(let i=0;i<2;i++){const el=document.createElement("div");el.className="poop nana";el.textContent="🍌";
-        el.style.left=(baseX-16+i*16)+"px";el.style.top=topY+"px";stage.appendChild(el);poops.push(el);
-        const tx=(i*16-8),dy=groundY-topY;setTimeout(()=>{el.style.transform=`translate(${tx}px,${dy}px) rotate(${20+i*30}deg)`;},i*120);}
-      bubble("뿌직!",baseX,topY-10);setHint(c.name+"가 바나나 똥을 쌌어요! 💩🍌 (휴지로 닦아줘)");
-    }else{for(let i=0;i<5;i++){const el=document.createElement("div");el.className="poop pellet";el.style.left=(baseX-8)+"px";el.style.top=topY+"px";
-        stage.appendChild(el);poops.push(el);const tx=(i-2)*13+(Math.random()*8-4),dy=groundY-topY-i*3;
-        setTimeout(()=>{el.style.transform=`translate(${tx}px,${dy}px)`;},i*90);}
-      bubble("뽕!",baseX,topY-10);setHint(c.name+"가 동글동글 똥을 쌌어요! 💩 (휴지로 닦아줘)");}
+    const T={
+      banana:{cls:"nana",txt:"🍌",n:2,sp:16,rot:true,b:"뿌직!",h:"바나나 똥"},
+      log:{cls:"log",n:2,sp:0,stack:true,b:"끄응~",h:"굵은 똥"},
+      bigball:{cls:"bigball",n:3,sp:22,b:"쿵!",h:"커다란 똥"},
+      splat:{cls:"splat",n:2,sp:20,b:"찌익!",h:"하얀 새똥"},
+      pellet:{cls:"pellet",n:5,sp:13,b:"뽕!",h:"동글동글 똥"}
+    };
+    const t=T[c.poop]||T.pellet;
+    for(let i=0;i<t.n;i++){const el=document.createElement("div");el.className="poop "+t.cls;
+      if(t.txt)el.textContent=t.txt;
+      el.style.left=(baseX-10)+"px";el.style.top=topY+"px";stage.appendChild(el);poops.push(el);
+      const tx=t.stack?(Math.random()*6-3):((i-(t.n-1)/2)*t.sp+(Math.random()*6-3));
+      const dy=groundY-topY-(t.stack?i*12:i*2);const rot=t.rot?` rotate(${20+i*30}deg)`:(t.cls==="log"?" rotate(-6deg)":"");
+      setTimeout(()=>{el.style.transform=`translate(${tx}px,${dy}px)${rot}`;},i*100);}
+    bubble(t.b,baseX,topY-10);setHint(c.name+"가 "+t.h+"을 쌌어요! 💩 (휴지로 닦아줘)");
     updateUI();
   }
   function fart(c){const r=c.el.getBoundingClientRect();const x=r.left+r.width*0.5,y=r.top+r.height*0.7;
@@ -340,7 +350,7 @@
         <ellipse class="face" cx="188" cy="238" rx="5" ry="6" fill="#6b4a2c"/><ellipse class="face" cx="212" cy="238" rx="5" ry="6" fill="#6b4a2c"/>
         <path class="face" d="M178 258 q22 20 44 0" fill="none" stroke="#6b4a2c" stroke-width="3.5" stroke-linecap="round"/>
       </svg>`},
-    {key:"dog",name:"강아지",emoji:"🐶",cry:"멍멍!",fur:"#e8b06a",line:"#c98f48",poop:"pellet",foods:[["🦴","뼈다귀"],["🍖","고기"]],svg:`
+    {key:"dog",name:"강아지",emoji:"🐶",cry:"멍멍!",fur:"#e8b06a",line:"#c98f48",poop:"log",foods:[["🦴","뼈다귀"],["🍖","고기"]],svg:`
       <svg viewBox="0 0 400 520" class="creature breathe">
         <ellipse cx="200" cy="500" rx="120" ry="18" fill="rgba(0,0,0,0.13)"/>
         <g class="ear hit top" style="--d:-1;"><ellipse class="fur" cx="118" cy="210" rx="33" ry="86" stroke-width="3"/></g>
@@ -389,7 +399,7 @@
         <path class="face" d="M200 253 v8 M200 261 q-12 8 -22 0 M200 261 q12 8 22 0" stroke="#caa9a0" stroke-width="3" fill="none" stroke-linecap="round"/>
         <g class="face" stroke="#e3d4c4" stroke-width="2.5" stroke-linecap="round"><path d="M150 242 h-44"/><path d="M152 254 h-42"/><path d="M250 242 h44"/><path d="M248 254 h42"/></g>
       </svg>`},
-    {key:"elephant",name:"코끼리",emoji:"🐘",cry:"뿌우~",fur:"#a7b3c2",line:"#7e8a99",poop:"pellet",foods:[["🌿","풀"],["🍎","사과"]],svg:`
+    {key:"elephant",name:"코끼리",emoji:"🐘",cry:"뿌우~",fur:"#a7b3c2",line:"#7e8a99",poop:"bigball",foods:[["🌿","풀"],["🍎","사과"]],svg:`
       <svg viewBox="0 0 400 520" class="creature breathe">
         <ellipse cx="200" cy="500" rx="120" ry="18" fill="rgba(0,0,0,0.13)"/>
         <g class="ear hit top" style="--d:-1;"><ellipse class="fur" cx="108" cy="225" rx="56" ry="78" stroke-width="3"/></g>
@@ -403,7 +413,7 @@
         <path class="face" d="M176 268 q-10 26 4 40" stroke="#fff" stroke-width="8" fill="none" stroke-linecap="round"/>
         <path class="face" d="M224 268 q10 26 -4 40" stroke="#fff" stroke-width="8" fill="none" stroke-linecap="round"/>
       </svg>`},
-    {key:"eagle",name:"독수리",emoji:"🦅",cry:"끼이익!",fur:"#8a6a45",line:"#6b5236",poop:"pellet",foods:[["🐟","생선"],["🍗","닭다리"]],svg:`
+    {key:"eagle",name:"독수리",emoji:"🦅",cry:"끼이익!",fur:"#8a6a45",line:"#6b5236",poop:"splat",foods:[["🐟","생선"],["🍗","닭다리"]],svg:`
       <svg viewBox="0 0 400 520" class="creature breathe">
         <ellipse cx="200" cy="500" rx="120" ry="18" fill="rgba(0,0,0,0.13)"/>
         <g class="ear hit top" style="--d:-1;"><path class="fur" d="M118 350 q-78 -6 -92 66 q44 22 100 -2 z" stroke-width="3"/></g>
