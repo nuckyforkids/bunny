@@ -118,6 +118,17 @@
   .gamebar.on{display:flex;}
   .gamebar .gs{font-size:20px;font-weight:900;color:#3f5a3a;font-variant-numeric:tabular-nums;}
   .gamebar .gx{border:none;background:#ff8a80;color:#fff;font-weight:800;border-radius:12px;padding:8px 12px;cursor:pointer;font-family:inherit;}
+  .starbadge{position:fixed;top:8px;left:8px;z-index:26;border:none;cursor:pointer;font-family:inherit;font-weight:900;font-size:16px;
+    color:#3f5a3a;background:#fffdf7;border-radius:16px;padding:7px 12px;box-shadow:0 3px 0 rgba(63,90,58,.25);}
+  .starbadge:active{transform:translateY(2px);}
+  .flysticker{position:fixed;z-index:32;font-size:40px;pointer-events:none;transition:transform .9s cubic-bezier(.4,0,.5,1),opacity .9s;}
+  .board{position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;}
+  .board.on{display:flex;}
+  .board-inner{background:#fffdf7;border-radius:24px;padding:20px;width:min(90vw,420px);max-height:80vh;overflow:auto;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.3);}
+  .board-inner h3{margin:0 0 12px;color:#3f5a3a;}
+  .board-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;min-height:50px;}
+  .board-grid span{font-size:34px;}
+  .board-x{margin-top:14px;border:none;cursor:pointer;font-family:inherit;font-weight:800;background:#9fd47f;color:#3f5a3a;border-radius:14px;padding:12px 22px;}
   .tissue{position:fixed;font-size:48px;z-index:31;pointer-events:none;transform:translate(-50%,-50%);}
   .tissue.scrub{animation:scrub 1s ease;}
   @keyframes scrub{0%{transform:translate(-50%,-50%) rotate(-15deg);}20%{transform:translate(calc(-50% - 24px),-50%) rotate(12deg);}
@@ -145,6 +156,8 @@
 </style>
 
 <div id="stage">
+  <button class="starbadge" id="starbadge">⭐ <span id="starnum">0</span></button>
+  <div class="board" id="board"><div class="board-inner"><h3>⭐ 내 스티커</h3><div class="board-grid" id="boardgrid"></div><button class="board-x" id="boardx">닫기</button></div></div>
   <p class="hint" id="hint">위에서 동물을 골라봐! 👆 먹이는 끌어다 주세요 🍴</p>
   <div class="picker" id="picker"></div>
   <div class="foodtop" id="foodtop">
@@ -255,7 +268,7 @@
     const t=document.createElement("div");t.className="tissue";t.textContent="🧻";t.style.left=cx+"px";t.style.top=cy+"px";stage.appendChild(t);swish();
     requestAnimationFrame(()=>t.classList.add("scrub"));const gone=poops;poops=[];
     setTimeout(()=>gone.forEach(p=>{p.style.transition="opacity .4s, transform .4s";p.style.opacity="0";p.style.transform+=" scale(.3)";}),650);
-    setTimeout(()=>{gone.forEach(p=>p.remove());t.remove();bubble("반짝!",cx,cy-14);setHint("깨끗하게 닦았어요! ✨🧻 이제 또 밥 줄 수 있어요!");updateUI();},1150);}
+    setTimeout(()=>{gone.forEach(p=>p.remove());t.remove();bubble("반짝!",cx,cy-14);setHint("깨끗하게 닦았어요! ✨🧻 이제 또 밥 줄 수 있어요!");updateUI();earnSticker();},1150);}
 
   // ---- creature factory ----
   const EARC=["a-perk","a-flop","a-flap","a-twitch"];
@@ -432,8 +445,10 @@
     wipeBtn&&wipeBtn.classList.toggle("big",dirty&&!full);}
 
   // ---- feeding ----
+  const KONUM=["","하나","둘","셋","넷","다섯","여섯","일곱","여덟","아홉","열"];
   function afterFeed(c,em){if(c.eaten.length<10)c.eaten.push(em);c.feedCount=c.eaten.length;updateGauge(c);renderTop();updateUI();
-    if(c.feedCount>=10)setHint("💩 똥이 마려워! 큰 똥 버튼을 눌러줘!");}
+    say(KONUM[c.eaten.length]||"");
+    if(c.feedCount>=10){setHint("💩 똥이 마려워! 큰 똥 버튼을 눌러줘!");earnSticker();}}
   function refuse(c,reason){const svg=c.el;svg.classList.remove("refuse");void svg.offsetWidth;svg.classList.add("refuse");
     svg.addEventListener("animationend",()=>svg.classList.remove("refuse"),{once:true});
     try{navigator.vibrate&&navigator.vibrate([60,40,60]);}catch(e){}
@@ -467,6 +482,30 @@
     const m=mouthOf(c.el);flyTo(food[0],m,()=>reactFeed(c,food));}
   document.addEventListener("pointermove",moveDrag,{passive:false});document.addEventListener("pointerup",endDrag);document.addEventListener("pointercancel",endDrag);
 
+  // ---- 칭찬 스티커 ----
+  const STK=["⭐","🌟","🏆","🥇","🌈","🦄","🌸","🎉","💖","🍭"];
+  const stickers=[];
+  const starbadge=document.getElementById("starbadge"),starnum=document.getElementById("starnum");
+  const board=document.getElementById("board"),boardgrid=document.getElementById("boardgrid");
+  function earnSticker(){
+    const em=STK[Math.floor(Math.random()*STK.length)];stickers.push(em);
+    starnum.textContent=stickers.length;
+    const br=starbadge.getBoundingClientRect();
+    const f=document.createElement("div");f.className="flysticker";f.textContent=em;
+    f.style.left=(innerWidth/2-20)+"px";f.style.top=(innerHeight/2-20)+"px";document.body.appendChild(f);
+    requestAnimationFrame(()=>{f.style.transform=`translate(${br.left-innerWidth/2+20}px,${br.top-innerHeight/2+20}px) scale(.4)`;f.style.opacity="0.3";});
+    setTimeout(()=>f.remove(),950);
+    chime&&chime();say("참 잘했어요!");
+    bubble("참 잘했어요! "+em, innerWidth/2, innerHeight*0.4);
+  }
+  function chime(){A();const t=ac.currentTime;[523,659,784,1047].forEach((fr,i)=>{const o=ac.createOscillator(),g=ac.createGain();
+    o.type="triangle";o.frequency.value=fr;o.connect(g);g.connect(ac.destination);const tt=t+i*.08;
+    g.gain.setValueAtTime(0,tt);g.gain.linearRampToValueAtTime(.16,tt+.02);g.gain.exponentialRampToValueAtTime(.0001,tt+.28);o.start(tt);o.stop(tt+.3);});}
+  function openBoard(){boardgrid.innerHTML="";if(!stickers.length){boardgrid.innerHTML='<span style="grid-column:1/-1;font-size:14px;color:#7a6a5e">아직 없어요. 동물을 잘 돌보면 모여요!</span>';}
+    else stickers.forEach(e=>{const s=document.createElement("span");s.textContent=e;boardgrid.appendChild(s);});board.classList.add("on");}
+  starbadge.addEventListener("click",openBoard);
+  document.getElementById("boardx").addEventListener("click",()=>board.classList.remove("on"));
+
   // ---- bath ----
   function bath(){if(sleeping){setHint("자고 있어요! 먼저 깨워주세요 😴");return;}
     const r=selected.el.getBoundingClientRect();
@@ -474,10 +513,10 @@
       b.style.left=(r.left+Math.random()*r.width)+"px";b.style.top=(r.top+r.height*0.3+Math.random()*r.height*0.5)+"px";
       stage.appendChild(b);setTimeout(()=>{b.classList.add("go");},i*60);setTimeout(()=>b.remove(),i*60+1400);}
     swish();selected.api.react();bubble("뽀득뽀득!",r.left+r.width/2,r.top+r.height*0.3);
-    setTimeout(()=>{hearts(r.left+r.width/2,r.top+r.height*0.35);setHint(selected.name+" 깨끗해졌어요! ✨🛁");},1000);}
+    setTimeout(()=>{hearts(r.left+r.width/2,r.top+r.height*0.35);setHint(selected.name+" 깨끗해졌어요! ✨🛁");earnSticker();},1000);}
 
   // ---- 꾸미기 (accessories) ----
-  const ACCS=[["",0],["👒",2],["🎀",1],["🕶️",33],["👑",-2],["🧢",1]];
+  const ACCS=[["",0],["👒",2],["🎀",1],["🕶️",33],["👑",-2],["🧢",1],["🎩",-4],["🌸",2],["🦋",-2],["👓",33],["⭐",-4],["🐝",-2]];
   function renderAcc(c){const a=ACCS[c.accIdx||0];c.accEl.textContent=a[0];c.accEl.style.top=a[1]+"%";}
   function cycleAcc(){const c=selected;c.accIdx=((c.accIdx||0)+1)%ACCS.length;renderAcc(c);blip(800,1100,.1,"triangle");
     setHint(ACCS[c.accIdx][0]?("멋지다! "+ACCS[c.accIdx][0]):"꾸미기 벗었어요");}
@@ -551,5 +590,3 @@
     document.addEventListener("pointerdown",function once(){history.pushState(null,"",location.href);document.removeEventListener("pointerdown",once);});}catch(e){}
 })();
 </script>
-
-<!-- v12 -->
