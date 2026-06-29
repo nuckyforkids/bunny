@@ -72,7 +72,7 @@
   .cheek{opacity:0;transition:opacity .4s ease;}
   .cheek.show{opacity:.85;}
 
-  .creature{transform-box:fill-box;transform-origin:50% 100%;}
+  .creature{transform-box:fill-box;transform-origin:50% 100%;filter:drop-shadow(0 6px 4px rgba(0,0,0,.16));}
   .creature.breathe{animation:breathe 3.4s ease-in-out infinite;}
   @keyframes breathe{0%,100%{transform:scale(1);}50%{transform:scale(1.012);}}
   .creature.bounce{animation:bounce .55s ease;}
@@ -317,112 +317,106 @@
   // ===== ANIMAL DEFINITIONS =====
   const DEFS=[
     {key:"rabbit",name:"토끼",emoji:"🐰",cry:"폴짝!",fur:"#ffffff",line:"#e9dccb",poop:"pellet",foods:[["🥕","당근"],["🥬","상추"]],svg:`
-      <svg viewBox="0 0 400 520" class="creature breathe">
-        <ellipse cx="200" cy="500" rx="120" ry="18" fill="rgba(0,0,0,0.13)"/>
-        <g class="ear hit" style="--d:-1;"><ellipse class="fur" cx="150" cy="120" rx="32" ry="118" stroke-width="3"/><ellipse cx="150" cy="130" rx="16" ry="92" fill="#ffc2d6"/></g>
-        <g class="ear hit" style="--d:1;"><ellipse class="fur" cx="250" cy="120" rx="32" ry="118" stroke-width="3"/><ellipse cx="250" cy="130" rx="16" ry="92" fill="#ffc2d6"/></g>
-        <ellipse class="fur" cx="200" cy="410" rx="118" ry="100" stroke-width="3"/>
+      <svg viewBox="0 0 400 520" class="creature breathe"><defs><radialGradient id="gl" cx="38%" cy="27%" r="72%"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/></radialGradient><radialGradient id="sh" cx="50%" cy="104%" r="68%"><stop offset="0" stop-color="#000" stop-opacity=".18"/><stop offset=".55" stop-color="#000" stop-opacity="0"/></radialGradient></defs><ellipse cx="200" cy="500" rx="120" ry="18" fill="rgba(0,0,0,0.13)"/>
+        <g class="ear hit" style="--d:-1;"><ellipse class="fur" cx="150" cy="116" rx="33" ry="122" stroke-width="3"/><ellipse cx="150" cy="116" rx="33" ry="122" fill="url(#gl)" pointer-events="none"/><ellipse cx="150" cy="116" rx="33" ry="122" fill="url(#sh)" pointer-events="none"/><ellipse cx="150" cy="130" rx="17" ry="96" fill="#ffc2d6"/><ellipse cx="150" cy="120" rx="9" ry="72" fill="#ffd9e6"/></g>
+        <g class="ear hit" style="--d:1;"><ellipse class="fur" cx="250" cy="116" rx="33" ry="122" stroke-width="3"/><ellipse cx="250" cy="116" rx="33" ry="122" fill="url(#gl)" pointer-events="none"/><ellipse cx="250" cy="116" rx="33" ry="122" fill="url(#sh)" pointer-events="none"/><ellipse cx="250" cy="130" rx="17" ry="96" fill="#ffc2d6"/><ellipse cx="250" cy="120" rx="9" ry="72" fill="#ffd9e6"/></g>
+        <ellipse class="fur" cx="200" cy="408" rx="120" ry="102" stroke-width="3"/><ellipse cx="200" cy="408" rx="120" ry="102" fill="url(#gl)" pointer-events="none"/><ellipse cx="200" cy="408" rx="120" ry="102" fill="url(#sh)" pointer-events="none"/>
         <circle class="fur tail-back" cx="200" cy="470" r="30" stroke-width="3"/>
-        <ellipse class="fur" cx="150" cy="495" rx="36" ry="22" stroke-width="3"/><ellipse class="fur" cx="250" cy="495" rx="36" ry="22" stroke-width="3"/>
-        <ellipse class="fur" cx="108" cy="380" rx="22" ry="46" stroke-width="3"/><ellipse class="fur" cx="292" cy="380" rx="22" ry="46" stroke-width="3"/>
-        <ellipse class="belly hit" cx="200" cy="410" rx="80" ry="70" fill="#fff6fb" opacity=".85"/>
-        <circle class="fur head hit" cx="200" cy="225" r="118" stroke-width="3"/>
-        <circle class="cheek face" cx="135" cy="250" r="24" fill="#ffb3cd"/><circle class="cheek face" cx="265" cy="250" r="24" fill="#ffb3cd"/>
-        <g class="eyes hit face"><ellipse class="eye" cx="160" cy="215" rx="16" ry="22" fill="#3a2e2a"/><ellipse class="eye" cx="240" cy="215" rx="16" ry="22" fill="#3a2e2a"/><circle cx="166" cy="208" r="5" fill="#fff"/><circle cx="246" cy="208" r="5" fill="#fff"/></g>
-        <g class="mouth-g face"><path class="nose" d="M200 248 l16 12 q-16 14 -32 0 z" fill="#ff7aa2"/><path d="M200 262 v14" stroke="#caa9a0" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M186 278 q14 16 28 0" stroke="#caa9a0" stroke-width="3" fill="none" stroke-linecap="round"/></g>
-        <g class="face" stroke="#e3d4c4" stroke-width="2.5" stroke-linecap="round"><path d="M120 250 h-46"/><path d="M122 262 h-44"/><path d="M280 250 h46"/><path d="M278 262 h44"/></g>
+        <ellipse class="fur" cx="150" cy="497" rx="37" ry="23" stroke-width="3"/><ellipse class="fur" cx="250" cy="497" rx="37" ry="23" stroke-width="3"/>
+        <ellipse cx="150" cy="500" rx="16" ry="9" fill="#ffd0e0"/><ellipse cx="250" cy="500" rx="16" ry="9" fill="#ffd0e0"/>
+        <ellipse class="fur" cx="106" cy="378" rx="23" ry="48" stroke-width="3"/><ellipse class="fur" cx="294" cy="378" rx="23" ry="48" stroke-width="3"/>
+        <ellipse class="belly hit" cx="200" cy="414" rx="80" ry="72" fill="#fff6fb" opacity=".9"/>
+        <circle class="fur head hit" cx="200" cy="222" r="120" stroke-width="3"/><circle cx="200" cy="222" r="120" fill="url(#gl)" pointer-events="none"/><circle cx="200" cy="222" r="120" fill="url(#sh)" pointer-events="none"/>
+        <circle class="cheek face" cx="132" cy="252" r="25" fill="#ffb3cd"/><circle class="cheek face" cx="268" cy="252" r="25" fill="#ffb3cd"/>
+        <g class="eyes hit face"><ellipse class="eye" cx="158" cy="214" rx="18" ry="24" fill="#34281f"/><circle cx="164" cy="206" r="6.4799999999999995" fill="#fff"/><circle cx="153" cy="221" r="3" fill="#fff" opacity=".7"/><ellipse class="eye" cx="242" cy="214" rx="18" ry="24" fill="#34281f"/><circle cx="248" cy="206" r="6.4799999999999995" fill="#fff"/><circle cx="237" cy="221" r="3" fill="#fff" opacity=".7"/></g>
+        <g class="mouth-g face"><path class="nose" d="M200 246 l16 12 q-16 14 -32 0 z" fill="#ff7aa2"/><path d="M200 260 v14" stroke="#caa9a0" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M184 276 q16 17 32 0" stroke="#caa9a0" stroke-width="3" fill="none" stroke-linecap="round"/></g>
+        <g class="face" stroke="#e3d4c4" stroke-width="2.5" stroke-linecap="round"><path d="M120 248 h-46"/><path d="M122 260 h-44"/><path d="M280 248 h46"/><path d="M278 260 h44"/></g>
       </svg>`},
     {key:"monkey",name:"원숭이",emoji:"🐵",cry:"우끼끼!",fur:"#a9794e",line:"#855d39",poop:"banana",foods:[["🍌","바나나"],["🍎","사과"]],svg:`
-      <svg viewBox="0 0 400 520" class="creature breathe">
-        <ellipse cx="200" cy="500" rx="120" ry="18" fill="rgba(0,0,0,0.13)"/>
+      <svg viewBox="0 0 400 520" class="creature breathe"><defs><radialGradient id="gl" cx="38%" cy="27%" r="72%"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/></radialGradient><radialGradient id="sh" cx="50%" cy="104%" r="68%"><stop offset="0" stop-color="#000" stop-opacity=".18"/><stop offset=".55" stop-color="#000" stop-opacity="0"/></radialGradient></defs><ellipse cx="200" cy="500" rx="120" ry="18" fill="rgba(0,0,0,0.13)"/>
         <path d="M300 410 q86 -6 78 -92 q-4 -46 -44 -38 q-30 6 -22 40" fill="none" stroke="#9c6f44" stroke-width="18" stroke-linecap="round"/>
         <ellipse class="fur" cx="158" cy="470" rx="30" ry="46" stroke-width="3"/><ellipse class="fur" cx="242" cy="470" rx="30" ry="46" stroke-width="3"/>
         <ellipse cx="150" cy="500" rx="30" ry="16" fill="#ecc89c" stroke="#855d39" stroke-width="3"/><ellipse cx="250" cy="500" rx="30" ry="16" fill="#ecc89c" stroke="#855d39" stroke-width="3"/>
         <g class="ear hit top" style="--d:-1;"><ellipse class="fur" cx="106" cy="375" rx="22" ry="60" stroke-width="3"/><circle cx="106" cy="430" r="22" fill="#ecc89c" stroke="#855d39" stroke-width="3"/></g>
         <g class="ear hit top" style="--d:1;"><ellipse class="fur" cx="294" cy="375" rx="22" ry="60" stroke-width="3"/><circle cx="294" cy="430" r="22" fill="#ecc89c" stroke="#855d39" stroke-width="3"/></g>
-        <ellipse class="fur" cx="200" cy="400" rx="96" ry="96" stroke-width="3"/>
+        <ellipse class="fur" cx="200" cy="400" rx="98" ry="98" stroke-width="3"/><ellipse cx="200" cy="400" rx="98" ry="98" fill="url(#gl)" pointer-events="none"/><ellipse cx="200" cy="400" rx="98" ry="98" fill="url(#sh)" pointer-events="none"/>
         <ellipse class="belly hit" cx="200" cy="410" rx="62" ry="68" fill="#ecc89c"/>
         <circle cx="116" cy="180" r="42" fill="#a9794e" stroke="#855d39" stroke-width="3"/><circle cx="116" cy="180" r="24" fill="#ecc89c"/>
         <circle cx="284" cy="180" r="42" fill="#a9794e" stroke="#855d39" stroke-width="3"/><circle cx="284" cy="180" r="24" fill="#ecc89c"/>
-        <circle class="head hit" cx="200" cy="200" r="100" fill="#a9794e" stroke="#855d39" stroke-width="3"/>
+        <circle class="fur head hit" cx="200" cy="200" r="100" stroke-width="3"/><circle cx="200" cy="200" r="100" fill="url(#gl)" pointer-events="none"/><circle cx="200" cy="200" r="100" fill="url(#sh)" pointer-events="none"/>
         <ellipse class="face" cx="200" cy="235" rx="64" ry="54" fill="#ecc89c"/>
-        <g class="eyes hit face"><ellipse class="eye" cx="170" cy="190" rx="15" ry="20" fill="#3a2e2a"/><ellipse class="eye" cx="230" cy="190" rx="15" ry="20" fill="#3a2e2a"/><circle cx="175" cy="184" r="5" fill="#fff"/><circle cx="235" cy="184" r="5" fill="#fff"/></g>
+        <g class="eyes hit face"><ellipse class="eye" cx="170" cy="188" rx="16" ry="21" fill="#34281f"/><circle cx="176" cy="180" r="5.76" fill="#fff"/><circle cx="165" cy="195" r="3" fill="#fff" opacity=".7"/><ellipse class="eye" cx="230" cy="188" rx="16" ry="21" fill="#34281f"/><circle cx="236" cy="180" r="5.76" fill="#fff"/><circle cx="225" cy="195" r="3" fill="#fff" opacity=".7"/></g>
         <ellipse class="face" cx="188" cy="238" rx="5" ry="6" fill="#6b4a2c"/><ellipse class="face" cx="212" cy="238" rx="5" ry="6" fill="#6b4a2c"/>
         <path class="face" d="M178 258 q22 20 44 0" fill="none" stroke="#6b4a2c" stroke-width="3.5" stroke-linecap="round"/>
       </svg>`},
     {key:"dog",name:"강아지",emoji:"🐶",cry:"멍멍!",fur:"#e8b06a",line:"#c98f48",poop:"log",foods:[["🦴","뼈다귀"],["🍖","고기"]],svg:`
-      <svg viewBox="0 0 400 520" class="creature breathe">
-        <ellipse cx="200" cy="500" rx="120" ry="18" fill="rgba(0,0,0,0.13)"/>
-        <g class="ear hit top" style="--d:-1;"><ellipse class="fur" cx="118" cy="210" rx="33" ry="86" stroke-width="3"/></g>
-        <g class="ear hit top" style="--d:1;"><ellipse class="fur" cx="282" cy="210" rx="33" ry="86" stroke-width="3"/></g>
+      <svg viewBox="0 0 400 520" class="creature breathe"><defs><radialGradient id="gl" cx="38%" cy="27%" r="72%"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/></radialGradient><radialGradient id="sh" cx="50%" cy="104%" r="68%"><stop offset="0" stop-color="#000" stop-opacity=".18"/><stop offset=".55" stop-color="#000" stop-opacity="0"/></radialGradient></defs><ellipse cx="200" cy="500" rx="120" ry="18" fill="rgba(0,0,0,0.13)"/>
+        <g class="ear hit top" style="--d:-1;"><ellipse class="fur" cx="118" cy="210" rx="33" ry="86" stroke-width="3"/><ellipse cx="118" cy="210" rx="33" ry="86" fill="url(#gl)" pointer-events="none"/><ellipse cx="118" cy="210" rx="33" ry="86" fill="url(#sh)" pointer-events="none"/></g>
+        <g class="ear hit top" style="--d:1;"><ellipse class="fur" cx="282" cy="210" rx="33" ry="86" stroke-width="3"/><ellipse cx="282" cy="210" rx="33" ry="86" fill="url(#gl)" pointer-events="none"/><ellipse cx="282" cy="210" rx="33" ry="86" fill="url(#sh)" pointer-events="none"/></g>
         <ellipse class="fur" cx="150" cy="472" rx="30" ry="44" stroke-width="3"/><ellipse class="fur" cx="250" cy="472" rx="30" ry="44" stroke-width="3"/>
-        <ellipse class="fur" cx="200" cy="400" rx="100" ry="95" stroke-width="3"/>
+        <ellipse class="fur" cx="200" cy="400" rx="100" ry="96" stroke-width="3"/><ellipse cx="200" cy="400" rx="100" ry="96" fill="url(#gl)" pointer-events="none"/><ellipse cx="200" cy="400" rx="100" ry="96" fill="url(#sh)" pointer-events="none"/>
         <path d="M296 400 q60 -16 50 -68" fill="none" stroke="#e8b06a" stroke-width="16" stroke-linecap="round"/>
-        <ellipse class="belly hit" cx="200" cy="412" rx="66" ry="66" fill="#f6dcae"/>
-        <circle class="fur head hit" cx="200" cy="210" r="106" stroke-width="3"/>
-        <ellipse class="face" cx="200" cy="252" rx="52" ry="42" fill="#f6dcae"/>
-        <g class="eyes hit face"><ellipse class="eye" cx="167" cy="196" rx="15" ry="20" fill="#3a2e2a"/><ellipse class="eye" cx="233" cy="196" rx="15" ry="20" fill="#3a2e2a"/><circle cx="172" cy="190" r="5" fill="#fff"/><circle cx="238" cy="190" r="5" fill="#fff"/></g>
-        <ellipse class="face" cx="200" cy="244" rx="14" ry="10" fill="#3a2e2a"/>
-        <path class="face" d="M200 254 v12 M200 266 q-15 10 -28 0 M200 266 q15 10 28 0" fill="none" stroke="#a9744a" stroke-width="3" stroke-linecap="round"/>
-        <path class="face" d="M192 290 q8 12 16 0" fill="#ff7aa2"/>
+        <ellipse class="belly hit" cx="200" cy="414" rx="66" ry="66" fill="#f6dcae"/>
+        <circle class="fur head hit" cx="200" cy="210" r="106" stroke-width="3"/><circle cx="200" cy="210" r="106" fill="url(#gl)" pointer-events="none"/><circle cx="200" cy="210" r="106" fill="url(#sh)" pointer-events="none"/>
+        <ellipse class="face" cx="200" cy="254" rx="52" ry="42" fill="#f6dcae"/>
+        <g class="eyes hit face"><ellipse class="eye" cx="167" cy="196" rx="16" ry="21" fill="#34281f"/><circle cx="173" cy="188" r="5.76" fill="#fff"/><circle cx="162" cy="203" r="3" fill="#fff" opacity=".7"/><ellipse class="eye" cx="233" cy="196" rx="16" ry="21" fill="#34281f"/><circle cx="239" cy="188" r="5.76" fill="#fff"/><circle cx="228" cy="203" r="3" fill="#fff" opacity=".7"/></g>
+        <ellipse class="face" cx="200" cy="246" rx="15" ry="11" fill="#34281f"/>
+        <path class="face" d="M200 256 v12 M200 268 q-16 11 -30 0 M200 268 q16 11 30 0" fill="none" stroke="#a9744a" stroke-width="3" stroke-linecap="round"/>
+        <path class="face" d="M192 292 q8 13 16 0" fill="#ff7aa2"/>
       </svg>`},
     {key:"raccoon",name:"너구리",emoji:"🦝",cry:"끼끼!",fur:"#9aa0a6",line:"#6f757c",poop:"pellet",foods:[["🐟","생선"],["🌽","옥수수"]],svg:`
-      <svg viewBox="0 0 400 520" class="creature breathe">
-        <ellipse cx="200" cy="500" rx="120" ry="18" fill="rgba(0,0,0,0.13)"/>
-        <g class="ear hit" style="--d:-1;"><path class="fur" d="M132 118 l-26 -64 l58 24 z" stroke-width="3"/></g>
-        <g class="ear hit" style="--d:1;"><path class="fur" d="M268 118 l26 -64 l-58 24 z" stroke-width="3"/></g>
+      <svg viewBox="0 0 400 520" class="creature breathe"><defs><radialGradient id="gl" cx="38%" cy="27%" r="72%"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/></radialGradient><radialGradient id="sh" cx="50%" cy="104%" r="68%"><stop offset="0" stop-color="#000" stop-opacity=".18"/><stop offset=".55" stop-color="#000" stop-opacity="0"/></radialGradient></defs><ellipse cx="200" cy="500" rx="120" ry="18" fill="rgba(0,0,0,0.13)"/>
+        <g class="ear hit" style="--d:-1;"><path class="fur" d="M132 116 l-26 -64 l58 24 z" stroke-width="3"/><path d="M128 104 l-12 -30 l26 12 z" fill="#5b6068"/></g>
+        <g class="ear hit" style="--d:1;"><path class="fur" d="M268 116 l26 -64 l-58 24 z" stroke-width="3"/><path d="M272 104 l12 -30 l-26 12 z" fill="#5b6068"/></g>
         <ellipse class="fur" cx="155" cy="470" rx="28" ry="42" stroke-width="3"/><ellipse class="fur" cx="245" cy="470" rx="28" ry="42" stroke-width="3"/>
-        <ellipse class="fur" cx="200" cy="400" rx="98" ry="92" stroke-width="3"/>
+        <ellipse class="fur" cx="200" cy="400" rx="98" ry="94" stroke-width="3"/><ellipse cx="200" cy="400" rx="98" ry="94" fill="url(#gl)" pointer-events="none"/><ellipse cx="200" cy="400" rx="98" ry="94" fill="url(#sh)" pointer-events="none"/>
         <path d="M292 412 q72 0 70 -72" fill="none" stroke="#9aa0a6" stroke-width="24" stroke-linecap="round"/>
         <path d="M334 360 q28 0 28 -34" fill="none" stroke="#5b6068" stroke-width="24" stroke-linecap="round"/>
-        <ellipse class="belly hit" cx="200" cy="412" rx="60" ry="62" fill="#d7dade"/>
-        <circle class="fur head hit" cx="200" cy="215" r="100" stroke-width="3"/>
-        <path class="face" d="M122 206 q78 -44 156 0 q-22 56 -78 56 q-56 0 -78 -56 z" fill="#4a4f56"/>
-        <ellipse class="face" cx="165" cy="212" rx="22" ry="20" fill="#eef0f2"/><ellipse class="face" cx="235" cy="212" rx="22" ry="20" fill="#eef0f2"/>
-        <g class="eyes hit face"><ellipse class="eye" cx="165" cy="214" rx="12" ry="15" fill="#222"/><ellipse class="eye" cx="235" cy="214" rx="12" ry="15" fill="#222"/><circle cx="169" cy="209" r="4" fill="#fff"/><circle cx="239" cy="209" r="4" fill="#fff"/></g>
-        <ellipse class="face" cx="200" cy="252" rx="30" ry="24" fill="#eef0f2"/>
+        <ellipse class="belly hit" cx="200" cy="414" rx="60" ry="62" fill="#d7dade"/>
+        <circle class="fur head hit" cx="200" cy="214" r="102" stroke-width="3"/><circle cx="200" cy="214" r="102" fill="url(#gl)" pointer-events="none"/><circle cx="200" cy="214" r="102" fill="url(#sh)" pointer-events="none"/>
+        <path class="face" d="M120 204 q80 -46 160 0 q-22 58 -80 58 q-58 0 -80 -58 z" fill="#4a4f56"/>
+        <ellipse class="face" cx="164" cy="212" rx="23" ry="21" fill="#eef0f2"/><ellipse class="face" cx="236" cy="212" rx="23" ry="21" fill="#eef0f2"/>
+        <g class="eyes hit face"><ellipse class="eye" cx="164" cy="213" rx="13" ry="16" fill="#34281f"/><circle cx="170" cy="205" r="5" fill="#fff"/><circle cx="159" cy="220" r="3" fill="#fff" opacity=".7"/><ellipse class="eye" cx="236" cy="213" rx="13" ry="16" fill="#34281f"/><circle cx="242" cy="205" r="5" fill="#fff"/><circle cx="231" cy="220" r="3" fill="#fff" opacity=".7"/></g>
+        <ellipse class="face" cx="200" cy="252" rx="31" ry="25" fill="#eef0f2"/>
         <ellipse class="face" cx="200" cy="248" rx="11" ry="8" fill="#222"/>
         <path class="face" d="M200 256 v8 M200 264 q-10 8 -20 2 M200 264 q10 8 20 2" fill="none" stroke="#555" stroke-width="3" stroke-linecap="round"/>
       </svg>`},
     {key:"cat",name:"고양이",emoji:"🐱",cry:"야옹~",fur:"#f4a14e",line:"#d4822f",poop:"pellet",foods:[["🐟","생선"],["🥛","우유"]],svg:`
-      <svg viewBox="0 0 400 520" class="creature breathe">
-        <ellipse cx="200" cy="500" rx="120" ry="18" fill="rgba(0,0,0,0.13)"/>
-        <g class="ear hit" style="--d:-1;"><path class="fur" d="M137 112 l-26 -62 l58 26 z" stroke-width="3"/><path d="M137 108 l-13 -34 l28 14 z" fill="#ffc2d6"/></g>
-        <g class="ear hit" style="--d:1;"><path class="fur" d="M263 112 l26 -62 l-58 26 z" stroke-width="3"/><path d="M263 108 l13 -34 l-28 14 z" fill="#ffc2d6"/></g>
+      <svg viewBox="0 0 400 520" class="creature breathe"><defs><radialGradient id="gl" cx="38%" cy="27%" r="72%"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/></radialGradient><radialGradient id="sh" cx="50%" cy="104%" r="68%"><stop offset="0" stop-color="#000" stop-opacity=".18"/><stop offset=".55" stop-color="#000" stop-opacity="0"/></radialGradient></defs><ellipse cx="200" cy="500" rx="120" ry="18" fill="rgba(0,0,0,0.13)"/>
+        <g class="ear hit" style="--d:-1;"><path class="fur" d="M137 110 l-26 -62 l58 26 z" stroke-width="3"/><path d="M135 106 l-13 -32 l28 14 z" fill="#ffc2d6"/></g>
+        <g class="ear hit" style="--d:1;"><path class="fur" d="M263 110 l26 -62 l-58 26 z" stroke-width="3"/><path d="M265 106 l13 -32 l-28 14 z" fill="#ffc2d6"/></g>
         <ellipse class="fur" cx="155" cy="470" rx="28" ry="42" stroke-width="3"/><ellipse class="fur" cx="245" cy="470" rx="28" ry="42" stroke-width="3"/>
-        <ellipse class="fur" cx="200" cy="400" rx="96" ry="92" stroke-width="3"/>
+        <ellipse class="fur" cx="200" cy="400" rx="96" ry="94" stroke-width="3"/><ellipse cx="200" cy="400" rx="96" ry="94" fill="url(#gl)" pointer-events="none"/><ellipse cx="200" cy="400" rx="96" ry="94" fill="url(#sh)" pointer-events="none"/>
         <path d="M294 420 q70 10 62 -62" fill="none" stroke="#f4a14e" stroke-width="18" stroke-linecap="round"/>
-        <ellipse class="belly hit" cx="200" cy="412" rx="60" ry="64" fill="#ffd9b0"/>
-        <circle class="fur head hit" cx="200" cy="215" r="100" stroke-width="3"/>
-        <g class="eyes hit face"><ellipse class="eye" cx="165" cy="205" rx="14" ry="20" fill="#3a2e2a"/><ellipse class="eye" cx="235" cy="205" rx="14" ry="20" fill="#3a2e2a"/><circle cx="170" cy="199" r="4" fill="#fff"/><circle cx="240" cy="199" r="4" fill="#fff"/></g>
-        <path class="face" d="M192 244 l16 0 l-8 9 z" fill="#ff7aa2"/>
-        <path class="face" d="M200 253 v8 M200 261 q-12 8 -22 0 M200 261 q12 8 22 0" stroke="#caa9a0" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <ellipse class="belly hit" cx="200" cy="414" rx="60" ry="64" fill="#ffd9b0"/>
+        <circle class="fur head hit" cx="200" cy="214" r="102" stroke-width="3"/><circle cx="200" cy="214" r="102" fill="url(#gl)" pointer-events="none"/><circle cx="200" cy="214" r="102" fill="url(#sh)" pointer-events="none"/>
+        <g class="eyes hit face"><ellipse class="eye" cx="165" cy="205" rx="15" ry="21" fill="#34281f"/><circle cx="171" cy="197" r="5.3999999999999995" fill="#fff"/><circle cx="160" cy="212" r="3" fill="#fff" opacity=".7"/><ellipse class="eye" cx="235" cy="205" rx="15" ry="21" fill="#34281f"/><circle cx="241" cy="197" r="5.3999999999999995" fill="#fff"/><circle cx="230" cy="212" r="3" fill="#fff" opacity=".7"/></g>
+        <path class="face" d="M191 244 l18 0 l-9 10 z" fill="#ff7aa2"/>
+        <path class="face" d="M200 254 v8 M200 262 q-12 8 -22 0 M200 262 q12 8 22 0" stroke="#caa9a0" stroke-width="3" fill="none" stroke-linecap="round"/>
         <g class="face" stroke="#e3d4c4" stroke-width="2.5" stroke-linecap="round"><path d="M150 242 h-44"/><path d="M152 254 h-42"/><path d="M250 242 h44"/><path d="M248 254 h42"/></g>
       </svg>`},
     {key:"elephant",name:"코끼리",emoji:"🐘",cry:"뿌우~",fur:"#a7b3c2",line:"#7e8a99",poop:"bigball",foods:[["🌿","풀"],["🍎","사과"]],svg:`
-      <svg viewBox="0 0 400 520" class="creature breathe">
-        <ellipse cx="200" cy="500" rx="120" ry="18" fill="rgba(0,0,0,0.13)"/>
-        <g class="ear hit top" style="--d:-1;"><ellipse class="fur" cx="108" cy="225" rx="56" ry="78" stroke-width="3"/></g>
-        <g class="ear hit top" style="--d:1;"><ellipse class="fur" cx="292" cy="225" rx="56" ry="78" stroke-width="3"/></g>
+      <svg viewBox="0 0 400 520" class="creature breathe"><defs><radialGradient id="gl" cx="38%" cy="27%" r="72%"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/></radialGradient><radialGradient id="sh" cx="50%" cy="104%" r="68%"><stop offset="0" stop-color="#000" stop-opacity=".18"/><stop offset=".55" stop-color="#000" stop-opacity="0"/></radialGradient></defs><ellipse cx="200" cy="500" rx="120" ry="18" fill="rgba(0,0,0,0.13)"/>
+        <g class="ear hit top" style="--d:-1;"><ellipse class="fur" cx="108" cy="225" rx="58" ry="80" stroke-width="3"/><ellipse cx="108" cy="225" rx="58" ry="80" fill="url(#gl)" pointer-events="none"/><ellipse cx="108" cy="225" rx="58" ry="80" fill="url(#sh)" pointer-events="none"/><ellipse cx="116" cy="230" rx="34" ry="50" fill="#000" opacity=".06"/></g>
+        <g class="ear hit top" style="--d:1;"><ellipse class="fur" cx="292" cy="225" rx="58" ry="80" stroke-width="3"/><ellipse cx="292" cy="225" rx="58" ry="80" fill="url(#gl)" pointer-events="none"/><ellipse cx="292" cy="225" rx="58" ry="80" fill="url(#sh)" pointer-events="none"/><ellipse cx="284" cy="230" rx="34" ry="50" fill="#000" opacity=".06"/></g>
         <ellipse class="fur" cx="150" cy="475" rx="34" ry="46" stroke-width="3"/><ellipse class="fur" cx="250" cy="475" rx="34" ry="46" stroke-width="3"/>
-        <ellipse class="fur" cx="200" cy="400" rx="105" ry="98" stroke-width="3"/>
-        <ellipse class="belly hit" cx="200" cy="412" rx="68" ry="66" fill="#c4cdd8"/>
-        <circle class="fur head hit" cx="200" cy="220" r="96" stroke-width="3"/>
-        <g class="eyes hit face"><ellipse class="eye" cx="166" cy="198" rx="12" ry="16" fill="#3a2e2a"/><ellipse class="eye" cx="234" cy="198" rx="12" ry="16" fill="#3a2e2a"/><circle cx="170" cy="193" r="4" fill="#fff"/><circle cx="238" cy="193" r="4" fill="#fff"/></g>
+        <ellipse class="fur" cx="200" cy="400" rx="106" ry="100" stroke-width="3"/><ellipse cx="200" cy="400" rx="106" ry="100" fill="url(#gl)" pointer-events="none"/><ellipse cx="200" cy="400" rx="106" ry="100" fill="url(#sh)" pointer-events="none"/>
+        <ellipse class="belly hit" cx="200" cy="414" rx="68" ry="66" fill="#c4cdd8"/>
+        <circle class="fur head hit" cx="200" cy="220" r="98" stroke-width="3"/><circle cx="200" cy="220" r="98" fill="url(#gl)" pointer-events="none"/><circle cx="200" cy="220" r="98" fill="url(#sh)" pointer-events="none"/>
+        <g class="eyes hit face"><ellipse class="eye" cx="166" cy="198" rx="13" ry="17" fill="#34281f"/><circle cx="172" cy="190" r="5" fill="#fff"/><circle cx="161" cy="205" r="3" fill="#fff" opacity=".7"/><ellipse class="eye" cx="234" cy="198" rx="13" ry="17" fill="#34281f"/><circle cx="240" cy="190" r="5" fill="#fff"/><circle cx="229" cy="205" r="3" fill="#fff" opacity=".7"/></g>
         <path class="fur" d="M186 248 q-8 60 12 100 q18 34 -2 64 q-26 8 -36 -16 q14 -30 -2 -58 q-12 -42 10 -88 z" stroke-width="3"/>
         <path class="face" d="M176 268 q-10 26 4 40" stroke="#fff" stroke-width="8" fill="none" stroke-linecap="round"/>
         <path class="face" d="M224 268 q10 26 -4 40" stroke="#fff" stroke-width="8" fill="none" stroke-linecap="round"/>
       </svg>`},
     {key:"eagle",name:"독수리",emoji:"🦅",cry:"끼이익!",fur:"#8a6a45",line:"#6b5236",poop:"splat",foods:[["🐟","생선"],["🍗","닭다리"]],svg:`
-      <svg viewBox="0 0 400 520" class="creature breathe">
-        <ellipse cx="200" cy="500" rx="120" ry="18" fill="rgba(0,0,0,0.13)"/>
+      <svg viewBox="0 0 400 520" class="creature breathe"><defs><radialGradient id="gl" cx="38%" cy="27%" r="72%"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/></radialGradient><radialGradient id="sh" cx="50%" cy="104%" r="68%"><stop offset="0" stop-color="#000" stop-opacity=".18"/><stop offset=".55" stop-color="#000" stop-opacity="0"/></radialGradient></defs><ellipse cx="200" cy="500" rx="120" ry="18" fill="rgba(0,0,0,0.13)"/>
         <g class="ear hit top" style="--d:-1;"><path class="fur" d="M118 350 q-78 -6 -92 66 q44 22 100 -2 z" stroke-width="3"/></g>
         <g class="ear hit top" style="--d:1;"><path class="fur" d="M282 350 q78 -6 92 66 q-44 22 -100 -2 z" stroke-width="3"/></g>
         <ellipse cx="172" cy="492" rx="22" ry="12" fill="#f0a93c"/><ellipse cx="228" cy="492" rx="22" ry="12" fill="#f0a93c"/>
-        <ellipse class="fur" cx="200" cy="400" rx="90" ry="98" stroke-width="3"/>
+        <ellipse class="fur" cx="200" cy="400" rx="90" ry="98" stroke-width="3"/><ellipse cx="200" cy="400" rx="90" ry="98" fill="url(#gl)" pointer-events="none"/><ellipse cx="200" cy="400" rx="90" ry="98" fill="url(#sh)" pointer-events="none"/>
         <ellipse class="belly hit" cx="200" cy="418" rx="58" ry="64" fill="#b79468"/>
-        <circle class="head hit" cx="200" cy="200" r="98" fill="#f3efe6" stroke="#cfc7b5" stroke-width="3"/>
-        <g class="eyes hit face"><ellipse class="eye" cx="166" cy="190" rx="13" ry="17" fill="#3a2e2a"/><ellipse class="eye" cx="234" cy="190" rx="13" ry="17" fill="#3a2e2a"/><circle cx="171" cy="185" r="4" fill="#fff"/><circle cx="239" cy="185" r="4" fill="#fff"/></g>
+        <circle class="head hit" cx="200" cy="200" r="98" fill="#f3efe6" stroke="#cfc7b5" stroke-width="3"/><circle cx="200" cy="200" r="98" fill="url(#gl)" pointer-events="none"/><circle cx="200" cy="200" r="98" fill="url(#sh)" pointer-events="none"/>
+        <g class="eyes hit face"><ellipse class="eye" cx="166" cy="190" rx="13" ry="17" fill="#34281f"/><circle cx="172" cy="182" r="5" fill="#fff"/><circle cx="161" cy="197" r="3" fill="#fff" opacity=".7"/><ellipse class="eye" cx="234" cy="190" rx="13" ry="17" fill="#34281f"/><circle cx="240" cy="182" r="5" fill="#fff"/><circle cx="229" cy="197" r="3" fill="#fff" opacity=".7"/></g>
         <path class="face" d="M182 220 h36 l-5 24 q-13 12 -26 0 z" fill="#f0a93c" stroke="#d68b1f" stroke-width="2"/>
         <path class="face" d="M200 244 q0 14 -7 20 q13 3 13 -11 z" fill="#e0991f"/>
       </svg>`},
