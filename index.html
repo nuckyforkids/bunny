@@ -136,7 +136,18 @@
   .cubox{position:relative;height:190px;border-radius:14px;background:linear-gradient(#eaf6ff,#dcefe2);overflow:hidden;}
   .butt{position:absolute;left:50%;top:30px;transform:translateX(-50%);width:130px;height:96px;}
   .cheek2{position:absolute;top:0;width:74px;height:90px;border-radius:50%;box-shadow:inset -6px -10px 14px rgba(0,0,0,.12),inset 6px 8px 12px rgba(255,255,255,.4);}
-  .hole{position:absolute;left:50%;bottom:6px;transform:translateX(-50%);width:26px;height:16px;border-radius:50%;background:#6b4a36;box-shadow:inset 0 2px 3px rgba(0,0,0,.5);z-index:2;}
+  .hole{position:absolute;left:50%;bottom:6px;transform:translateX(-50%);width:22px;height:13px;border-radius:50%;background:#e29a90;box-shadow:inset 0 2px 3px rgba(0,0,0,.25);z-index:2;}
+  .stain{position:absolute;border-radius:50%;transition:opacity .5s;z-index:3;}
+  .stain.pee{background:radial-gradient(circle at 40% 35%,#ffe87a,#e8c23a);}
+  .stain.gone{opacity:0;}
+  .pkblob{position:absolute;border-radius:50%;background:radial-gradient(circle at 40% 35%,#a9744a,#5a3618);z-index:3;}
+  .pkblob.plucked{animation:pluckpoop 1.5s ease forwards;}
+  @keyframes pluckpoop{0%,46%{transform:translate(0,0);opacity:1;}100%{transform:translate(0,-150px);opacity:0;}}
+  .wt{position:absolute;left:50%;top:44%;font-size:42px;z-index:5;transform:translate(-50%,-50%);}
+  .wt.dab{animation:dab 1.7s ease;}
+  @keyframes dab{0%,100%{transform:translate(-50%,-50%);}14%{transform:translate(calc(-50% - 24px),-32%);}24%{transform:translate(calc(-50% - 24px),-50%);}44%{transform:translate(calc(-50% + 20px),-32%);}54%{transform:translate(calc(-50% + 20px),-50%);}74%{transform:translate(-50%,-32%);}84%{transform:translate(-50%,-50%);}}
+  .wt.pluck{animation:pluckmove 1.5s ease forwards;}
+  @keyframes pluckmove{0%{transform:translate(-50%,-130px);}30%{transform:translate(-50%,8px);}50%{transform:translate(-50%,12px);}100%{transform:translate(-50%,-150px);opacity:0;}}
   .hole.pee{width:14px;height:10px;background:#7a5a40;}
   .cupoop{position:absolute!important;z-index:1;}
   .cudrop{position:absolute;font-size:22px;z-index:1;transition:transform .7s ease-in,opacity .7s;}
@@ -325,25 +336,20 @@
     if((c.feedCount||0)>=(c.max||10)){toiletFlow(c,"poop");}
     else setHint("밥을 10개 먹어야 똥이 마려워요! 🍽️");}
   function wipe(){if(bathMode){setHint("목욕 먼저 끝내요! 🛁");return;}if(sleeping){setHint("자고 있어요! 먼저 깨워주세요 😴");return;}
-    const r=selected.el.getBoundingClientRect();const cx=r.left+r.width*0.5;
-    // 화면 속 동물도 살짝 닦기
-    const t=document.createElement("div");t.className="tissue";t.textContent="🧻";
-    t.style.left=cx+"px";t.style.top=(r.top+r.height*0.80)+"px";stage.appendChild(t);
-    requestAnimationFrame(()=>t.classList.add("scrub"));swish();setHint(selected.name+" 똥꼬 쓱쓱 닦아요! 🧻");
-    setTimeout(()=>{t.style.top=(r.top+r.height*0.58)+"px";t.classList.remove("scrub");void t.offsetWidth;t.classList.add("scrub");},950);
-    setTimeout(()=>{t.remove();},1900);
-    wipeCloseup(selected);}
-  function wipeCloseup(c){
+    wipeCloseup(selected,lastType||"poop");}
+  function wipeCloseup(c,type){
     const fur=(getComputedStyle(c.el).getPropertyValue("--fur").trim())||"#fff";
-    cutitle.textContent="쓱쓱 깨끗하게! 🧻";
-    cubox.innerHTML=`<div class="butt"><div class="cheek2" style="left:8px;background:${fur}"></div><div class="cheek2" style="right:8px;background:${fur}"></div><div class="hole"></div>`+
-      `<div class="smudge" style="width:14px;height:11px;left:54px;bottom:18px;"></div><div class="smudge" style="width:10px;height:8px;left:74px;bottom:24px;"></div>`+
-      `<div class="wipetissue">🧻</div></div>`;
-    closeup.classList.add("on");swish();
-    setTimeout(()=>{swish();},700);
-    setTimeout(()=>{cubox.querySelectorAll(".smudge").forEach(s=>s.classList.add("gone"));},900);
-    setTimeout(()=>{const w=cubox.querySelector(".water");const bx=cubox.querySelector(".butt");if(bx){const sp=document.createElement("div");sp.textContent="✨";sp.style.cssText="position:absolute;left:50%;top:30%;transform:translate(-50%,-50%);font-size:40px;";bx.appendChild(sp);}},1500);
-    setTimeout(()=>{closeup.classList.remove("on");hearts(c.el.getBoundingClientRect().left+c.el.getBoundingClientRect().width*0.5,c.el.getBoundingClientRect().top+100);setHint(c.name+" 뽀송뽀송 깨끗! ✨🧻");needWipe=false;earnSticker();updateUI();},2200);}
+    const isPee=type==="pee";
+    cutitle.textContent=isPee?"톡톡 닦아요! 🧻":"꼬집어 쏙! 🧻";
+    let inner=`<div class="butt"><div class="cheek2" style="left:8px;background:${fur}"></div><div class="cheek2" style="right:8px;background:${fur}"></div><div class="hole"></div>`;
+    if(isPee)inner+=`<div class="stain pee" style="width:16px;height:12px;left:48px;bottom:20px;"></div><div class="stain pee" style="width:12px;height:9px;left:74px;bottom:26px;"></div>`;
+    else inner+=`<div class="pkblob" style="width:22px;height:19px;left:54px;bottom:13px;"></div>`;
+    inner+=`<div class="wt ${isPee?"dab":"pluck"}">🧻</div></div>`;
+    cubox.innerHTML=inner;closeup.classList.add("on");swish();
+    if(isPee){setTimeout(swish,500);setTimeout(swish,1000);setTimeout(()=>cubox.querySelectorAll(".stain").forEach(s=>s.classList.add("gone")),1100);setHint(c.name+" 소변 자국 톡톡! 🧻");}
+    else{const pk=cubox.querySelector(".pkblob");if(pk)requestAnimationFrame(()=>pk.classList.add("plucked"));setHint(c.name+" 똥을 꼬집어 쏙! 🧻");}
+    setTimeout(()=>{const bx=cubox.querySelector(".butt");if(bx){const sp=document.createElement("div");sp.textContent="✨";sp.style.cssText="position:absolute;left:50%;top:26%;transform:translate(-50%,-50%);font-size:42px;";bx.appendChild(sp);}},1500);
+    setTimeout(()=>{cubox.innerHTML="";closeup.classList.remove("on");const r=c.el.getBoundingClientRect();hearts(r.left+r.width/2,r.top+100);bubble("뽀송! ✨",r.left+r.width/2,r.top+r.height*0.4);setHint(c.name+" 뽀송뽀송 깨끗! ✨🧻");needWipe=false;earnSticker();updateUI();},2300);}
   // ---- 사탕 → 충치 → 치과 ----
   function giveCandy(){const c=selected;if(bathMode){setHint("목욕 먼저 끝내요! 🛁");return;}if(sleeping){setHint("자고 있어요! 먼저 깨워주세요 😴");return;}
     if(c.cavity){blip(220,160,.15,"square");bubble("아야! 🦷",mouthOf(c.el).x,mouthOf(c.el).y);setHint(c.name+" 이가 아파서 못 먹어요! 치과 가야 해요 🦷");return;}
@@ -574,8 +580,8 @@
     if((c.water||0)>=(c.max||10))toiletFlow(c,"pee");else setHint("물을 더 마셔야 쉬가 마려워요! 💧");}
   // ---- 변기 + 클로즈업 ----
   const toiletEl=document.getElementById("toilet"),closeup=document.getElementById("closeup"),cutitle=document.getElementById("cutitle"),cubox=document.getElementById("cubox");
-  let toiletBusy=false,cuTimer=null,toiletDirty=false,toiletWaste=[],needWipe=false;
-  function toiletFlow(c,type){if(toiletBusy)return;toiletBusy=true;const wrap=c.char,svg=c.el;
+  let toiletBusy=false,cuTimer=null,toiletDirty=false,toiletWaste=[],needWipe=false,lastType="poop";
+  function toiletFlow(c,type){if(toiletBusy)return;toiletBusy=true;lastType=type;const wrap=c.char,svg=c.el;
     toiletEl.classList.add("on");setHint(c.name+(type==="pee"?"가 변기에서 쉬~ 🚽":"가 변기에 응가하러 가요! 🚽"));blip(500,800,.12,"sine");
     setTimeout(()=>{wrap.classList.add("ontoilet");svg.classList.add("turned");},350);
     if(type==="poop")setTimeout(()=>fart(c),940);
