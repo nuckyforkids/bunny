@@ -83,7 +83,10 @@
     45%{transform:translateY(-120px) scaleY(1.1) scaleX(.92) rotate(-3deg);}72%{transform:translateY(0) scaleY(.86) scaleX(1.08);}100%{transform:translateY(0) scaleY(1);}}
   .mouth-g.munch{animation:munch .45s ease 3;}
   @keyframes munch{0%,100%{transform:translateY(0);}50%{transform:translateY(3px);}}
-  .creature.sad{filter:grayscale(.35) brightness(.96);animation:wince 2.2s ease-in-out infinite;}
+  .painface{pointer-events:none;}
+  .swell{transform-box:fill-box;transform-origin:center;animation:throb 1s ease-in-out infinite;}
+  @keyframes throb{0%,100%{transform:scale(1);}50%{transform:scale(1.2);}}
+  .creature.sad{filter:brightness(.97);animation:wince 1.6s ease-in-out infinite;}
   @keyframes wince{0%,100%{transform:rotate(0) translateY(0);}50%{transform:rotate(-2deg) translateY(2px);}}
   .cavbadge{position:absolute;left:50%;top:-4%;transform:translateX(-50%);font-size:min(13vw,56px);z-index:8;pointer-events:none;}
   .toothbox{position:relative;height:190px;display:flex;align-items:center;justify-content:center;}
@@ -355,10 +358,29 @@
     if(c.cavity){blip(220,160,.15,"square");bubble("아야! 🦷",mouthOf(c.el).x,mouthOf(c.el).y);setHint(c.name+" 이가 아파서 못 먹어요! 치과 가야 해요 🦷");return;}
     c.candy=(c.candy||0)+1;c.api.munch();const p=mouthOf(c.el);blip(900,1200,.08,"sine");bubble("사탕! 🍬",p.x,p.y);
     if(c.candy>=10){setCavity(c);}else setHint(`${c.name} 사탕 ${c.candy}개… 너무 많이 먹으면 충치 생겨요! 🍬`);}
-  function setCavity(c){c.cavity=true;c.el.classList.add("sad");c.cavEl.textContent="😣";
+  const FACES={
+    rabbit:{lx:158,ly:214,rx:242,mx:200,my:274,sx:240,sy:262},
+    monkey:{lx:170,ly:188,rx:230,mx:200,my:258,sx:226,sy:250},
+    dog:{lx:167,ly:196,rx:233,mx:200,my:266,sx:230,sy:258},
+    raccoon:{lx:164,ly:213,rx:236,mx:200,my:264,sx:232,sy:256},
+    cat:{lx:165,ly:205,rx:235,mx:200,my:261,sx:232,sy:252},
+    elephant:{lx:166,ly:198,rx:234,mx:200,my:248,sx:234,sy:244},
+    eagle:{lx:166,ly:190,rx:234,mx:200,my:226,sx:230,sy:222},
+  };
+  function injectPain(c){const F=FACES[c.key]||FACES.rabbit;const eyes=c.el.querySelector(".eyes");if(eyes)eyes.style.opacity="0";
+    const g=document.createElementNS("http://www.w3.org/2000/svg","g");g.setAttribute("class","painface face");
+    g.innerHTML=`<path d="M${F.lx-13} ${F.ly-9} L${F.lx} ${F.ly} L${F.lx-13} ${F.ly+9}" stroke="#34281f" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`+
+      `<path d="M${F.rx+13} ${F.ly-9} L${F.rx} ${F.ly} L${F.rx+13} ${F.ly+9}" stroke="#34281f" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`+
+      `<path d="M${F.mx-16} ${F.my+5} Q${F.mx} ${F.my-7} ${F.mx+16} ${F.my+5}" stroke="#9a5050" stroke-width="4" fill="none" stroke-linecap="round"/>`+
+      `<ellipse class="swell" cx="${F.sx}" cy="${F.sy}" rx="27" ry="23" fill="#ff8a8a" opacity=".7"/>`+
+      `<text x="${F.sx+18}" y="${F.sy-20}" font-size="34">💢</text>`+
+      `<text x="${F.lx-30}" y="${F.ly+34}" font-size="20">💧</text>`;
+    c.el.appendChild(g);c._painG=g;}
+  function clearPain(c){if(c._painG){c._painG.remove();c._painG=null;}const eyes=c.el.querySelector(".eyes");if(eyes)eyes.style.opacity="";}
+  function setCavity(c){c.cavity=true;c.el.classList.add("sad");injectPain(c);
     blip(200,140,.3,"sawtooth");bubble("아야! 이가 아파 😣🦷",mouthOf(c.el).x,mouthOf(c.el).y-10);say("아야 이가 아파");
-    setHint(c.name+" 충치 생겼어요! 😣 치과(🦷)에서 치료해요!");updateUI();}
-  function clearCavity(c){c.cavity=false;c.candy=0;c.el.classList.remove("sad");c.cavEl.textContent="";updateUI();}
+    setHint(c.name+" 충치 생겼어요! 😣 볼이 부었어요! 치과(🦷)에서 치료해요!");updateUI();}
+  function clearCavity(c){c.cavity=false;c.candy=0;c.el.classList.remove("sad");clearPain(c);updateUI();}
   function drillSound(){A();const t=ac.currentTime;const o=ac.createOscillator(),g=ac.createGain(),l=ac.createOscillator(),lg=ac.createGain();
     o.type="sawtooth";o.frequency.value=140;l.frequency.value=30;lg.gain.value=40;l.connect(lg);lg.connect(o.frequency);
     o.connect(g);g.connect(ac.destination);g.gain.setValueAtTime(.16,t);g.gain.setValueAtTime(.16,t+1.4);g.gain.exponentialRampToValueAtTime(.0001,t+1.6);
