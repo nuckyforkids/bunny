@@ -95,6 +95,11 @@
     background:radial-gradient(circle at 40% 35%,#7a5630,#241307);transition:transform .8s ease;}
   .drill{position:absolute;left:50%;top:0;font-size:46px;animation:drilling 1.7s ease;}
   @keyframes drilling{0%{transform:translate(-50%,-50px) rotate(0);}35%{transform:translate(-50%,18px) rotate(18deg);}50%{transform:translate(-44%,20px) rotate(-18deg);}65%{transform:translate(-56%,18px) rotate(18deg);}100%{transform:translate(-50%,18px) rotate(0);}}
+  .teethbox{position:relative;height:190px;display:flex;align-items:center;justify-content:center;}
+  .teethrow{display:flex;gap:3px;background:#ffc2c2;padding:16px 12px;border-radius:18px;box-shadow:inset 0 3px 6px rgba(0,0,0,.12);}
+  .teethrow i{width:16px;height:28px;background:#fff;border-radius:4px 4px 7px 7px;border:1px solid #e2d8c8;display:block;}
+  .brush{position:absolute;left:50%;top:48%;font-size:48px;animation:brushmove 1.8s ease;}
+  @keyframes brushmove{0%,100%{transform:translate(calc(-50% - 46px),-50%) rotate(-10deg);}25%{transform:translate(calc(-50% + 40px),-50%) rotate(10deg);}50%{transform:translate(calc(-50% - 40px),-50%) rotate(-10deg);}75%{transform:translate(calc(-50% + 40px),-50%) rotate(10deg);}}
   .creature.dance{animation:dance 1.5s ease;}
   @keyframes dance{0%,100%{transform:rotate(0) translateY(0);}12%{transform:rotate(-9deg) translateY(-8px);}25%{transform:rotate(9deg) translateY(0);}40%{transform:rotate(-9deg) translateY(-8px);}55%{transform:rotate(9deg) translateY(0);}70%{transform:rotate(-7deg) translateY(-5px);}85%{transform:rotate(7deg);}}
   .creature.refuse{animation:refuse .55s ease;}
@@ -395,6 +400,16 @@
     setTimeout(()=>{closeup.classList.remove("on");clearCavity(c);c.api.react();const r=c.el.getBoundingClientRect();
       hearts(r.left+r.width/2,r.top+r.height*0.4);bubble("이 반짝! 😁✨",r.left+r.width/2,r.top+r.height*0.35);
       setHint(c.name+" 충치 치료 완료! 이가 반짝반짝! ✨🦷");earnSticker();},2300);}
+  function brushTeeth(){const c=selected;if(bathMode){setHint("목욕 먼저 끝내요! 🛁");return;}if(sleeping){setHint("자고 있어요! 먼저 깨워주세요 😴");return;}
+    cutitle.textContent="치카치카! 🪥 위아래 쓱쓱";
+    cubox.innerHTML=`<div class="teethbox"><div class="teethrow">${"<i></i>".repeat(7)}</div><div class="brush">🪥</div></div>`;
+    closeup.classList.add("on");swish();setTimeout(swish,500);setTimeout(swish,1000);setHint(c.name+" 이를 닦아요! 🪥");
+    const box=cubox.querySelector(".teethbox");let k=0;cuTimer=setInterval(()=>{if(k++>=5||!box){clearInterval(cuTimer);return;}
+      const f=document.createElement("div");f.textContent="🫧";f.style.cssText=`position:absolute;left:${30+Math.random()*60}%;top:${40+Math.random()*25}%;font-size:24px;`;box.appendChild(f);setTimeout(()=>f.remove(),700);},300);
+    setTimeout(()=>{const bx=cubox.querySelector(".teethbox");if(bx){const sp=document.createElement("div");sp.textContent="✨";sp.style.cssText="position:absolute;left:50%;top:34%;transform:translate(-50%,-50%);font-size:42px;";bx.appendChild(sp);}},1600);
+    setTimeout(()=>{closeup.classList.remove("on");if(!c.cavity)c.candy=0;c.api.react();const r=c.el.getBoundingClientRect();
+      hearts(r.left+r.width/2,r.top+r.height*0.4);bubble("반짝! 😁✨",r.left+r.width/2,r.top+r.height*0.35);
+      setHint(c.cavity?(c.name+" 치카치카! 그래도 충치는 치과(🦷)에서!"):(c.name+" 치카치카! 이가 반짝! 충치 예방 ✨🪥"));earnSticker();updateUI();},2200);}
   function melody(){[523,587,659,784,659,587].forEach((f,i)=>setTimeout(()=>blip(f,f,.12,"triangle"),i*150));}
   function danceAction(){if(bathMode){setHint("목욕 먼저 끝내요! 🛁");return;}if(sleeping){setHint("자고 있어요! 먼저 깨워주세요 😴");return;}
     const svg=selected.el;svg.classList.remove("dance");void svg.offsetWidth;svg.classList.add("dance");
@@ -482,7 +497,7 @@
         <ellipse class="fur" cx="150" cy="472" rx="30" ry="44" stroke-width="3"/><ellipse class="fur" cx="250" cy="472" rx="30" ry="44" stroke-width="3"/>
         <ellipse class="fur" cx="200" cy="400" rx="100" ry="96" stroke-width="3"/><ellipse cx="200" cy="400" rx="100" ry="96" fill="url(#gl)" pointer-events="none"/><ellipse cx="200" cy="400" rx="100" ry="96" fill="url(#sh)" pointer-events="none"/>
         <path class="furst" d="M296 400 q60 -16 50 -68" fill="none" stroke-width="16" stroke-linecap="round"/>
-        <ellipse class="belly hit face" cx="200" cy="414" rx="66" ry="66" fill="#f6dcae"/><ellipse class="fur" cx="172" cy="404" rx="18" ry="32" stroke-width="3"/><ellipse class="fur" cx="228" cy="404" rx="18" ry="32" stroke-width="3"/><ellipse cx="172" cy="432" rx="18" ry="11" fill="#f6dcae"/><ellipse cx="228" cy="432" rx="18" ry="11" fill="#f6dcae"/>
+        <ellipse class="belly hit face" cx="200" cy="414" rx="66" ry="66" fill="#f6dcae"/><ellipse class="fur" cx="172" cy="382" rx="18" ry="30" stroke-width="3"/><ellipse class="fur" cx="228" cy="382" rx="18" ry="30" stroke-width="3"/><ellipse cx="172" cy="410" rx="18" ry="12" fill="#f6dcae" stroke="#c98f48" stroke-width="2.5"/><ellipse cx="228" cy="410" rx="18" ry="12" fill="#f6dcae" stroke="#c98f48" stroke-width="2.5"/>
         <circle class="fur head hit" cx="200" cy="210" r="106" stroke-width="3"/><circle cx="200" cy="210" r="106" fill="url(#gl)" pointer-events="none"/><circle cx="200" cy="210" r="106" fill="url(#sh)" pointer-events="none"/>
         <ellipse class="face" cx="200" cy="254" rx="52" ry="42" fill="#f6dcae"/>
         <ellipse class="face" cx="167" cy="196" rx="33" ry="35" fill="#000000" opacity=".16"/><g class="eyes hit face"><ellipse class="eye" cx="167" cy="196" rx="16" ry="21" fill="#34281f"/><circle cx="173" cy="188" r="5.76" fill="#fff"/><circle cx="162" cy="203" r="3" fill="#fff" opacity=".7"/><ellipse class="eye" cx="233" cy="196" rx="16" ry="21" fill="#34281f"/><circle cx="239" cy="188" r="5.76" fill="#fff"/><circle cx="228" cy="203" r="3" fill="#fff" opacity=".7"/></g>
@@ -498,7 +513,7 @@
         <ellipse class="fur" cx="200" cy="400" rx="98" ry="94" stroke-width="3"/><ellipse cx="200" cy="400" rx="98" ry="94" fill="url(#gl)" pointer-events="none"/><ellipse cx="200" cy="400" rx="98" ry="94" fill="url(#sh)" pointer-events="none"/>
         <path class="furst" d="M292 412 q72 0 70 -72" fill="none" stroke-width="24" stroke-linecap="round"/>
         <path d="M334 360 q28 0 28 -34" fill="none" stroke="#5b6068" stroke-width="24" stroke-linecap="round"/><path d="M300 404 q34 4 44 -28" fill="none" stroke="#5b6068" stroke-width="22" stroke-linecap="round"/>
-        <ellipse class="belly hit face" cx="200" cy="414" rx="60" ry="62" fill="#d7dade"/><ellipse class="fur" cx="176" cy="406" rx="16" ry="30" stroke-width="3"/><ellipse class="fur" cx="224" cy="406" rx="16" ry="30" stroke-width="3"/><ellipse cx="176" cy="434" rx="16" ry="10" fill="#4a4f56"/><ellipse cx="224" cy="434" rx="16" ry="10" fill="#4a4f56"/>
+        <ellipse class="belly hit face" cx="200" cy="414" rx="60" ry="62" fill="#d7dade"/><ellipse class="fur" cx="176" cy="384" rx="16" ry="30" stroke-width="3"/><ellipse class="fur" cx="224" cy="384" rx="16" ry="30" stroke-width="3"/><ellipse cx="176" cy="412" rx="16" ry="12" fill="#3a3f46" stroke="#23272c" stroke-width="2"/><ellipse cx="224" cy="412" rx="16" ry="12" fill="#3a3f46" stroke="#23272c" stroke-width="2"/>
         <circle class="fur head hit" cx="200" cy="214" r="102" stroke-width="3"/><circle cx="200" cy="214" r="102" fill="url(#gl)" pointer-events="none"/><circle cx="200" cy="214" r="102" fill="url(#sh)" pointer-events="none"/>
         <path class="face" d="M120 204 q80 -46 160 0 q-22 58 -80 58 q-58 0 -80 -58 z" fill="#4a4f56"/>
         <ellipse class="face" cx="164" cy="212" rx="23" ry="21" fill="#eef0f2"/><ellipse class="face" cx="236" cy="212" rx="23" ry="21" fill="#eef0f2"/>
@@ -514,7 +529,7 @@
         <ellipse class="fur" cx="155" cy="470" rx="28" ry="42" stroke-width="3"/><ellipse class="fur" cx="245" cy="470" rx="28" ry="42" stroke-width="3"/>
         <ellipse class="fur" cx="200" cy="400" rx="96" ry="94" stroke-width="3"/><ellipse cx="200" cy="400" rx="96" ry="94" fill="url(#gl)" pointer-events="none"/><ellipse cx="200" cy="400" rx="96" ry="94" fill="url(#sh)" pointer-events="none"/>
         <path class="furst" d="M294 420 q70 10 62 -62" fill="none" stroke-width="18" stroke-linecap="round"/>
-        <ellipse class="belly hit face" cx="200" cy="414" rx="60" ry="64" fill="#ffd9b0"/><ellipse class="fur" cx="176" cy="406" rx="16" ry="30" stroke-width="3"/><ellipse class="fur" cx="224" cy="406" rx="16" ry="30" stroke-width="3"/><ellipse cx="176" cy="434" rx="16" ry="10" fill="#ffd9b0"/><ellipse cx="224" cy="434" rx="16" ry="10" fill="#ffd9b0"/><g fill="#ffb3c2"><circle cx="171" cy="436" r="2.3"/><circle cx="176" cy="438" r="2.3"/><circle cx="181" cy="436" r="2.3"/><circle cx="219" cy="436" r="2.3"/><circle cx="224" cy="438" r="2.3"/><circle cx="229" cy="436" r="2.3"/></g>
+        <ellipse class="belly hit face" cx="200" cy="414" rx="60" ry="64" fill="#ffd9b0"/><ellipse class="fur" cx="176" cy="384" rx="16" ry="30" stroke-width="3"/><ellipse class="fur" cx="224" cy="384" rx="16" ry="30" stroke-width="3"/><ellipse cx="176" cy="412" rx="16" ry="12" fill="#ffe2c2" stroke="#d4822f" stroke-width="2.5"/><ellipse cx="224" cy="412" rx="16" ry="12" fill="#ffe2c2" stroke="#d4822f" stroke-width="2.5"/><g fill="#ff7fa6"><ellipse cx="176" cy="414" rx="7" ry="5.5"/><ellipse cx="224" cy="414" rx="7" ry="5.5"/><circle cx="169" cy="407" r="2.6"/><circle cx="176" cy="405" r="2.6"/><circle cx="183" cy="407" r="2.6"/><circle cx="217" cy="407" r="2.6"/><circle cx="224" cy="405" r="2.6"/><circle cx="231" cy="407" r="2.6"/></g>
         <circle class="fur head hit" cx="200" cy="214" r="102" stroke-width="3"/><circle cx="200" cy="214" r="102" fill="url(#gl)" pointer-events="none"/><circle cx="200" cy="214" r="102" fill="url(#sh)" pointer-events="none"/>
         <g class="face" opacity=".22" stroke="#5a3a1a" stroke-width="6" stroke-linecap="round" fill="none"><path d="M200 118 v22"/><path d="M176 122 l-7 19"/><path d="M224 122 l7 19"/></g><g class="eyes hit face"><ellipse class="eye" cx="165" cy="205" rx="15" ry="21" fill="#34281f"/><circle cx="171" cy="197" r="5.3999999999999995" fill="#fff"/><circle cx="160" cy="212" r="3" fill="#fff" opacity=".7"/><ellipse class="eye" cx="235" cy="205" rx="15" ry="21" fill="#34281f"/><circle cx="241" cy="197" r="5.3999999999999995" fill="#fff"/><circle cx="230" cy="212" r="3" fill="#fff" opacity=".7"/></g>
         <path class="face" d="M191 244 l18 0 l-9 10 z" fill="#ff7aa2"/>
@@ -789,6 +804,7 @@
   actBtn("🛁","목욕",bath);
   actBtn("👒","꾸미기",cycleAcc);
   actBtn("🍬","사탕",giveCandy);
+  actBtn("🪥","양치",brushTeeth);
   const dentBtn=actBtn("🦷","치과",dentist);
   actBtn("💃","춤",danceAction);
   actBtn("🎮","게임",startGame);
