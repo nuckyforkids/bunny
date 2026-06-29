@@ -12,14 +12,14 @@
     background:linear-gradient(180deg,#eef4fb,#e4edf6);overflow:hidden;padding-bottom:6px;}
   .hint{margin:8px 16px 0;text-align:center;font-size:clamp(14px,3.8vw,19px);font-weight:800;color:#3f5a3a;text-shadow:0 1px 0 #fff;min-height:22px;padding:0 8px;}
 
-  .picker{display:flex;gap:8px;overflow-x:auto;padding:8px 10px 2px;max-width:100%;scrollbar-width:none;}
+  .picker{display:flex;flex:0 0 auto;gap:8px;overflow-x:auto;padding:8px 10px 2px;max-width:100%;scrollbar-width:none;}
   .picker::-webkit-scrollbar{display:none;}
   .pk{flex:0 0 auto;width:52px;height:52px;border-radius:16px;border:none;background:#fffdf7;font-size:28px;
     box-shadow:0 3px 0 rgba(63,90,58,.25);cursor:pointer;}
   .pk[aria-pressed="true"]{background:#ffe9a6;box-shadow:0 3px 0 #d9b94e;outline:3px solid #3f5a3a;}
   .pk:active{transform:translateY(2px);}
 
-  .foodtop{display:flex;flex-direction:column;align-items:center;gap:2px;margin-top:2px;}
+  .foodtop{display:flex;flex:0 0 auto;flex-direction:column;align-items:center;gap:2px;margin-top:2px;}
   .ftnum{display:flex;align-items:center;gap:6px;line-height:1;}
   .ftwho{font-size:clamp(22px,6vw,32px);}
   .ftn{font-size:clamp(28px,8vw,46px);font-weight:900;color:#3f5a3a;text-shadow:0 1px 0 #fff;font-variant-numeric:tabular-nums;}
@@ -27,10 +27,10 @@
   .ftgrid span{font-size:clamp(16px,4.5vw,26px);animation:fpop .3s ease;}
   @keyframes fpop{0%{transform:scale(.2);}60%{transform:scale(1.2);}100%{transform:scale(1);}}
 
-  .scene{flex:1;min-height:50vh;position:relative;display:flex;align-items:flex-end;justify-content:center;width:100%;padding:46px 3vw 0;overflow:hidden;
+  .scene{flex:1 1 auto;min-height:0;position:relative;display:flex;align-items:flex-end;justify-content:center;width:100%;padding:36px 3vw 0;overflow:hidden;
     transition:background .4s ease;background:linear-gradient(180deg,#cdeafd 0%,#a9d8f5 55%,#bfe6a0 55%,#9fd47f 100%);}
   .char{position:relative;display:flex;align-items:flex-end;justify-content:center;padding:4px;}
-  .char svg{width:min(78vw,400px);height:auto;max-height:58vh;}
+  .char svg{width:min(74vw,360px);height:auto;max-height:54vh;}
 
   .blanket{position:absolute;left:50%;bottom:0;transform:translate(-50%,115%);width:96%;max-width:520px;height:40%;
     border-radius:46px 46px 0 0;z-index:4;transition:transform .5s cubic-bezier(.34,1.3,.64,1);
@@ -154,7 +154,7 @@
   .gamebar.on{display:flex;}
   .gamebar .gs{font-size:20px;font-weight:900;color:#3f5a3a;font-variant-numeric:tabular-nums;}
   .gamebar .gx{border:none;background:#ff8a80;color:#fff;font-weight:800;border-radius:12px;padding:8px 12px;cursor:pointer;font-family:inherit;}
-  .starbadge{position:fixed;top:8px;left:8px;z-index:26;border:none;cursor:pointer;font-family:inherit;font-weight:900;font-size:16px;
+  .starbadge{position:fixed;top:8px;right:8px;z-index:26;border:none;cursor:pointer;font-family:inherit;font-weight:900;font-size:16px;
     color:#3f5a3a;background:#fffdf7;border-radius:16px;padding:7px 12px;box-shadow:0 3px 0 rgba(63,90,58,.25);}
   .starbadge:active{transform:translateY(2px);}
   .flysticker{position:fixed;z-index:32;font-size:40px;pointer-events:none;transition:transform .9s cubic-bezier(.4,0,.5,1),opacity .9s;}
@@ -171,18 +171,18 @@
     40%{transform:translate(calc(-50% + 24px),-50%) rotate(-12deg);}60%{transform:translate(calc(-50% - 18px),-50%) rotate(9deg);}
     80%{transform:translate(calc(-50% + 18px),-50%) rotate(-9deg);}100%{transform:translate(-50%,-50%) rotate(0);}}
 
-  .colors{display:flex;gap:10px;justify-content:center;padding:2px 16px 0;flex-wrap:wrap;}
+  .colors{display:flex;flex:0 0 auto;gap:9px;justify-content:center;padding:2px 16px 0;flex-wrap:wrap;}
   .sw{width:34px;height:34px;border-radius:50%;border:3px solid #fff;cursor:pointer;box-shadow:0 2px 5px rgba(0,0,0,.2);}
   .sw[aria-pressed="true"]{outline:3px solid #3f5a3a;outline-offset:2px;}
   .sw:active{transform:scale(.92);}
 
-  .tools{padding:4px 10px calc(8px + env(safe-area-inset-bottom));width:100%;}
+  .tools{flex:0 0 auto;padding:4px 8px calc(6px + env(safe-area-inset-bottom));width:100%;}
   .peebtn .em{filter:sepia(1) saturate(6) hue-rotate(8deg) brightness(1.08);}
-  .row{display:flex;gap:9px;justify-content:center;flex-wrap:wrap;margin-top:6px;}
-  .ibtn{border:none;cursor:pointer;font-family:inherit;font-weight:800;color:#3f5a3a;background:#fffdf7;border-radius:18px;
-    box-shadow:0 4px 0 rgba(63,90,58,.28);display:flex;flex-direction:column;align-items:center;gap:1px;padding:8px 12px;min-width:64px;touch-action:none;}
-  .ibtn .em{font-size:30px;line-height:1;pointer-events:none;}
-  .ibtn .lb{font-size:12px;pointer-events:none;}
+  .row{display:flex;gap:7px;justify-content:center;flex-wrap:wrap;margin-top:5px;}
+  .ibtn{border:none;cursor:pointer;font-family:inherit;font-weight:800;color:#3f5a3a;background:#fffdf7;border-radius:15px;
+    box-shadow:0 3px 0 rgba(63,90,58,.28);display:flex;flex-direction:column;align-items:center;gap:0;padding:6px 9px;min-width:50px;touch-action:none;}
+  .ibtn .em{font-size:23px;line-height:1;pointer-events:none;}
+  .ibtn .lb{font-size:10px;pointer-events:none;}
   .ibtn:active{transform:translateY(3px);box-shadow:none;}
   .ibtn.act{background:#ffe9a6;box-shadow:0 4px 0 #d9b94e;}
   .ibtn.big{background:#ffe07a;transform:scale(1.35);animation:btnglow 1s ease-in-out infinite;}
@@ -310,12 +310,12 @@
     if((c.feedCount||0)>=10){toiletFlow(c,"poop");}
     else setHint("밥을 10개 먹어야 똥이 마려워요! 🍽️");}
   function wipe(){if(bathMode){setHint("목욕 먼저 끝내요! 🛁");return;}if(sleeping){setHint("자고 있어요! 먼저 깨워주세요 😴");return;}
-    if(!poops.length){setHint("닦을 똥이 없어요! ✨");return;}
-    let cx=0,cy=0;poops.forEach(p=>{const r=p.getBoundingClientRect();cx+=r.left+r.width/2;cy+=r.top+r.height/2;});cx/=poops.length;cy/=poops.length;
-    const t=document.createElement("div");t.className="tissue";t.textContent="🧻";t.style.left=cx+"px";t.style.top=cy+"px";stage.appendChild(t);swish();
-    requestAnimationFrame(()=>t.classList.add("scrub"));const gone=poops;poops=[];
-    setTimeout(()=>gone.forEach(p=>{p.style.transition="opacity .4s, transform .4s";p.style.opacity="0";p.style.transform+=" scale(.3)";}),650);
-    setTimeout(()=>{gone.forEach(p=>p.remove());t.remove();bubble("반짝!",cx,cy-14);setHint("깨끗하게 닦았어요! ✨🧻 이제 또 밥 줄 수 있어요!");updateUI();earnSticker();},1150);}
+    const r=selected.el.getBoundingClientRect();const cx=r.left+r.width*0.5;
+    const t=document.createElement("div");t.className="tissue";t.textContent="🧻";
+    t.style.left=cx+"px";t.style.top=(r.top+r.height*0.80)+"px";stage.appendChild(t);
+    requestAnimationFrame(()=>t.classList.add("scrub"));swish();setHint(selected.name+" 똥꼬 쓱쓱 닦아요! 🧻");
+    setTimeout(()=>{t.style.top=(r.top+r.height*0.58)+"px";t.classList.remove("scrub");void t.offsetWidth;t.classList.add("scrub");swish();setHint(selected.name+" 앞도 쓱쓱! 🧻");},950);
+    setTimeout(()=>{t.remove();hearts(cx,r.top+r.height*0.5);bubble("뽀송! ✨",cx,r.top+r.height*0.42);setHint(selected.name+" 깨끗하게 닦았어요! ✨🧻");earnSticker();},1900);}
 
   // ---- creature factory ----
   const EARC=["a-perk","a-flop","a-flap","a-twitch"];
@@ -483,7 +483,7 @@
     if(toiletDirty){toiletDirty=false;closeup.classList.remove("on");toiletEl.classList.remove("on");}
     c.api.openEyes();buildFoods(c);updateWater(c);renderAcc(c);renderTop();updateUI();setHint(c.name+" 친구랑 놀자! "+c.emoji);}
   function updateUI(){const full=selected&&selected.eaten.length>=10;const dirty=poops.length>0;const waterFull=selected&&selected.water>=10;
-    foodsEl.style.display=(full||dirty)?"none":"flex";
+    foodsEl.style.visibility=(full||dirty)?"hidden":"visible";
     poopBtn&&poopBtn.classList.toggle("big",full);
     wipeBtn&&wipeBtn.classList.toggle("big",dirty&&!full);
     peeBtn&&peeBtn.classList.toggle("big",waterFull&&!toiletDirty);
@@ -605,7 +605,7 @@
     stage.appendChild(e);bathDrops.push(e);}}
   function clearWet(n){const rm=(n==null)?bathDrops:bathDrops.splice(0,n);(n==null?bathDrops:rm).forEach(e=>{e.style.opacity="0";setTimeout(()=>e.remove(),400);});if(n==null)bathDrops=[];}
   function startBath(){if(sleeping){setHint("자고 있어요! 먼저 깨워주세요 😴");return;}
-    bathMode=true;bathStep=0;bathLayer.classList.add("on");foodsEl.style.display="none";
+    bathMode=true;bathStep=0;bathLayer.classList.add("on");foodsEl.style.visibility="hidden";
     setHint(BATH[0].h);say("목욕하자!");}
   function bathTap(){if(!bathMode)return;const r=selected.el.getBoundingClientRect();const fx=BATH[bathStep].fx;
     const cx=r.left+r.width/2;
@@ -659,7 +659,7 @@
   }
   function startGame(){if(sleeping){setHint("자고 있어요! 먼저 깨워주세요 😴");return;}
     gameOn=true;gscoreN=0;gscore.textContent="🎮 0";gamebar.classList.add("on");
-    foodsEl.style.display="none";setHint(selected.name+" 음식만 받아먹어요! 🎮 (떨어지는 "+(selected.foods[0]?selected.foods[0][0]:"")+" 같은 걸 톡!)");
+    foodsEl.style.visibility="hidden";setHint(selected.name+" 음식만 받아먹어요! 🎮 (떨어지는 "+(selected.foods[0]?selected.foods[0][0]:"")+" 같은 걸 톡!)");
     gameTimer=setInterval(spawnFaller,1000);spawnFaller();}
   function stopGame(){gameOn=false;clearInterval(gameTimer);gamebar.classList.remove("on");
     fallers.forEach(f=>f.remove());fallers=[];updateUI();setHint("게임 끝! 🎮 "+gscoreN+"개 받아먹었어요!");}
