@@ -83,6 +83,15 @@
     45%{transform:translateY(-120px) scaleY(1.1) scaleX(.92) rotate(-3deg);}72%{transform:translateY(0) scaleY(.86) scaleX(1.08);}100%{transform:translateY(0) scaleY(1);}}
   .mouth-g.munch{animation:munch .45s ease 3;}
   @keyframes munch{0%,100%{transform:translateY(0);}50%{transform:translateY(3px);}}
+  .creature.sad{filter:grayscale(.35) brightness(.96);animation:wince 2.2s ease-in-out infinite;}
+  @keyframes wince{0%,100%{transform:rotate(0) translateY(0);}50%{transform:rotate(-2deg) translateY(2px);}}
+  .cavbadge{position:absolute;left:50%;top:-4%;transform:translateX(-50%);font-size:min(13vw,56px);z-index:8;pointer-events:none;}
+  .toothbox{position:relative;height:190px;display:flex;align-items:center;justify-content:center;}
+  .bigtooth{position:relative;font-size:120px;line-height:1;}
+  .cavity{position:absolute;left:50%;top:46%;transform:translate(-50%,-50%);width:30px;height:30px;border-radius:50%;
+    background:radial-gradient(circle at 40% 35%,#7a5630,#241307);transition:transform .8s ease;}
+  .drill{position:absolute;left:50%;top:0;font-size:46px;animation:drilling 1.7s ease;}
+  @keyframes drilling{0%{transform:translate(-50%,-50px) rotate(0);}35%{transform:translate(-50%,18px) rotate(18deg);}50%{transform:translate(-44%,20px) rotate(-18deg);}65%{transform:translate(-56%,18px) rotate(18deg);}100%{transform:translate(-50%,18px) rotate(0);}}
   .creature.dance{animation:dance 1.5s ease;}
   @keyframes dance{0%,100%{transform:rotate(0) translateY(0);}12%{transform:rotate(-9deg) translateY(-8px);}25%{transform:rotate(9deg) translateY(0);}40%{transform:rotate(-9deg) translateY(-8px);}55%{transform:rotate(9deg) translateY(0);}70%{transform:rotate(-7deg) translateY(-5px);}85%{transform:rotate(7deg);}}
   .creature.refuse{animation:refuse .55s ease;}
@@ -334,7 +343,30 @@
     setTimeout(()=>{swish();},700);
     setTimeout(()=>{cubox.querySelectorAll(".smudge").forEach(s=>s.classList.add("gone"));},900);
     setTimeout(()=>{const w=cubox.querySelector(".water");const bx=cubox.querySelector(".butt");if(bx){const sp=document.createElement("div");sp.textContent="✨";sp.style.cssText="position:absolute;left:50%;top:30%;transform:translate(-50%,-50%);font-size:40px;";bx.appendChild(sp);}},1500);
-    setTimeout(()=>{closeup.classList.remove("on");hearts(c.el.getBoundingClientRect().left+c.el.getBoundingClientRect().width*0.5,c.el.getBoundingClientRect().top+100);setHint(c.name+" 뽀송뽀송 깨끗! ✨🧻");earnSticker();},2200);}
+    setTimeout(()=>{closeup.classList.remove("on");hearts(c.el.getBoundingClientRect().left+c.el.getBoundingClientRect().width*0.5,c.el.getBoundingClientRect().top+100);setHint(c.name+" 뽀송뽀송 깨끗! ✨🧻");needWipe=false;earnSticker();updateUI();},2200);}
+  // ---- 사탕 → 충치 → 치과 ----
+  function giveCandy(){const c=selected;if(bathMode){setHint("목욕 먼저 끝내요! 🛁");return;}if(sleeping){setHint("자고 있어요! 먼저 깨워주세요 😴");return;}
+    if(c.cavity){blip(220,160,.15,"square");bubble("아야! 🦷",mouthOf(c.el).x,mouthOf(c.el).y);setHint(c.name+" 이가 아파서 못 먹어요! 치과 가야 해요 🦷");return;}
+    c.candy=(c.candy||0)+1;c.api.munch();const p=mouthOf(c.el);blip(900,1200,.08,"sine");bubble("사탕! 🍬",p.x,p.y);
+    if(c.candy>=10){setCavity(c);}else setHint(`${c.name} 사탕 ${c.candy}개… 너무 많이 먹으면 충치 생겨요! 🍬`);}
+  function setCavity(c){c.cavity=true;c.el.classList.add("sad");c.cavEl.textContent="😣";
+    blip(200,140,.3,"sawtooth");bubble("아야! 이가 아파 😣🦷",mouthOf(c.el).x,mouthOf(c.el).y-10);say("아야 이가 아파");
+    setHint(c.name+" 충치 생겼어요! 😣 치과(🦷)에서 치료해요!");updateUI();}
+  function clearCavity(c){c.cavity=false;c.candy=0;c.el.classList.remove("sad");c.cavEl.textContent="";updateUI();}
+  function drillSound(){A();const t=ac.currentTime;const o=ac.createOscillator(),g=ac.createGain(),l=ac.createOscillator(),lg=ac.createGain();
+    o.type="sawtooth";o.frequency.value=140;l.frequency.value=30;lg.gain.value=40;l.connect(lg);lg.connect(o.frequency);
+    o.connect(g);g.connect(ac.destination);g.gain.setValueAtTime(.16,t);g.gain.setValueAtTime(.16,t+1.4);g.gain.exponentialRampToValueAtTime(.0001,t+1.6);
+    o.start(t);l.start(t);o.stop(t+1.6);l.stop(t+1.6);}
+  function dentist(){const c=selected;if(bathMode){setHint("목욕 먼저 끝내요! 🛁");return;}if(sleeping){setHint("자고 있어요! 먼저 깨워주세요 😴");return;}
+    if(!c.cavity){setHint(c.name+" 이가 튼튼해요! 충치 없어요 😁🦷");return;}
+    cutitle.textContent="충치 치료중! 드릴 🦷";
+    cubox.innerHTML=`<div class="toothbox"><div class="bigtooth">🦷<div class="cavity" id="cav"></div></div><div class="drill">🪛</div></div>`;
+    closeup.classList.add("on");drillSound();setHint(c.name+" 치과에서 충치 치료중... 🦷");
+    setTimeout(()=>{const cav=document.getElementById("cav");if(cav)cav.style.transform="translate(-50%,-50%) scale(0)";},800);
+    setTimeout(()=>{const bx=cubox.querySelector(".bigtooth");if(bx){const sp=document.createElement("div");sp.textContent="✨";sp.style.cssText="position:absolute;left:50%;top:30%;transform:translate(-50%,-50%);font-size:44px;";bx.appendChild(sp);}},1500);
+    setTimeout(()=>{closeup.classList.remove("on");clearCavity(c);c.api.react();const r=c.el.getBoundingClientRect();
+      hearts(r.left+r.width/2,r.top+r.height*0.4);bubble("이 반짝! 😁✨",r.left+r.width/2,r.top+r.height*0.35);
+      setHint(c.name+" 충치 치료 완료! 이가 반짝반짝! ✨🦷");earnSticker();},2300);}
   function melody(){[523,587,659,784,659,587].forEach((f,i)=>setTimeout(()=>blip(f,f,.12,"triangle"),i*150));}
   function danceAction(){if(bathMode){setHint("목욕 먼저 끝내요! 🛁");return;}if(sleeping){setHint("자고 있어요! 먼저 깨워주세요 😴");return;}
     const svg=selected.el;svg.classList.remove("dance");void svg.offsetWidth;svg.classList.add("dance");
@@ -370,6 +402,7 @@
     const creature={key:def.key,name:def.name,emoji:def.emoji,cry:def.cry,poop:def.poop||"pellet",foods:def.foods||[],el:svg,char:wrap,api,eaten:[],feedCount:0,water:0,max:def.max||10};
     creature.gauges=addGauge(wrap);creature.gauge=creature.gauges.poop;
     const accEl=document.createElement("div");accEl.className="acc";wrap.appendChild(accEl);creature.accEl=accEl;creature.accIdx=0;
+    const cavEl=document.createElement("div");cavEl.className="cavbadge";wrap.appendChild(cavEl);creature.cavEl=cavEl;creature.candy=0;creature.cavity=false;
     function tapEar(ear){const pick=EARC[Math.floor(Math.random()*EARC.length)];EARC.forEach(c=>ear.classList.remove(c));void ear.offsetWidth;
       ear.classList.add(pick);ear.addEventListener("animationend",()=>ear.classList.remove(pick),{once:true});blip(560,840,.12,"sine");setHint(EARMSG[pick]);}
     ears.forEach(ear=>ear.addEventListener("click",e=>{e.stopPropagation();tapEar(ear);}));
@@ -509,14 +542,17 @@
     scene.style.background=BG[c.key]||BG.rabbit;
     if(gameOn)stopGame();
     if(bathMode){bathMode=false;bathLayer.classList.remove("on");clearWet();}
-    if(toiletDirty){toiletDirty=false;closeup.classList.remove("on");toiletEl.classList.remove("on");}
+    if(toiletDirty||needWipe){toiletDirty=false;needWipe=false;closeup.classList.remove("on");toiletEl.classList.remove("on");}
     c.api.openEyes();buildFoods(c);updateWater(c);renderAcc(c);renderTop();updateUI();setHint(c.name+" 친구랑 놀자! "+c.emoji);}
-  function updateUI(){const full=selected&&selected.eaten.length>=selected.max;const dirty=poops.length>0;const waterFull=selected&&selected.water>=selected.max;
-    foodsEl.style.visibility=(full||dirty)?"hidden":"visible";
-    poopBtn&&poopBtn.classList.toggle("big",full);
-    wipeBtn&&wipeBtn.classList.toggle("big",dirty&&!full);
-    peeBtn&&peeBtn.classList.toggle("big",waterFull&&!toiletDirty);
-    flushBtn&&flushBtn.classList.toggle("big",toiletDirty);}
+  function setBtn(btn,on){if(!btn)return;btn.style.display=on?"flex":"none";btn.classList.toggle("big",on);}
+  function updateUI(){const full=selected&&selected.eaten.length>=selected.max;const waterFull=selected&&selected.water>=selected.max;const cav=selected&&selected.cavity;
+    const busy=full||waterFull||toiletDirty||needWipe;
+    foodsEl.style.visibility=busy?"hidden":"visible";
+    setBtn(poopBtn,full&&!toiletDirty&&!needWipe);
+    setBtn(peeBtn,waterFull&&!toiletDirty&&!needWipe);
+    setBtn(flushBtn,toiletDirty);
+    setBtn(wipeBtn,needWipe);
+    setBtn(dentBtn,cav);}
 
   // ---- feeding ----
   const KONUM=["","하나","둘","셋","넷","다섯","여섯","일곱","여덟","아홉","열"];
@@ -538,7 +574,7 @@
     if((c.water||0)>=(c.max||10))toiletFlow(c,"pee");else setHint("물을 더 마셔야 쉬가 마려워요! 💧");}
   // ---- 변기 + 클로즈업 ----
   const toiletEl=document.getElementById("toilet"),closeup=document.getElementById("closeup"),cutitle=document.getElementById("cutitle"),cubox=document.getElementById("cubox");
-  let toiletBusy=false,cuTimer=null,toiletDirty=false,toiletWaste=[];
+  let toiletBusy=false,cuTimer=null,toiletDirty=false,toiletWaste=[],needWipe=false;
   function toiletFlow(c,type){if(toiletBusy)return;toiletBusy=true;const wrap=c.char,svg=c.el;
     toiletEl.classList.add("on");setHint(c.name+(type==="pee"?"가 변기에서 쉬~ 🚽":"가 변기에 응가하러 가요! 🚽"));blip(500,800,.12,"sine");
     setTimeout(()=>{wrap.classList.add("ontoilet");svg.classList.add("turned");},350);
@@ -565,7 +601,7 @@
     flush();bubble("쏴아~ 🚽",innerWidth/2,innerHeight*0.5);
     const bowl=document.getElementById("cubowl");if(bowl)bowl.classList.add("swirling");if(cuTimer)clearInterval(cuTimer);
     setTimeout(()=>{closeup.classList.remove("on");toiletEl.classList.remove("on");},1150);
-    toiletDirty=false;setHint("물이 소용돌이치며 쏙! 깨끗해요 ✨🚽");earnSticker();updateUI();}
+    toiletDirty=false;needWipe=true;setHint("물 내렸어요! 이제 🧻 휴지로 닦아요! ✨");earnSticker();updateUI();}
   function flush(){A();const t=ac.currentTime;const nb=ac.createBufferSource();const n=ac.sampleRate*0.6;const buf=ac.createBuffer(1,n,ac.sampleRate);
     const d=buf.getChannelData(0);for(let i=0;i<n;i++)d[i]=(Math.random()*2-1)*(1-i/n);nb.buffer=buf;
     const f=ac.createBiquadFilter();f.type="bandpass";f.frequency.value=600;const g=ac.createGain();g.gain.value=.25;
@@ -717,6 +753,8 @@
     else{blanket.classList.remove("on");zzz.classList.remove("on");selected.api.openEyes();selected.api.blink(2);boing();setHint("잘 잤다! 안녕 "+selected.emoji);}});
   actBtn("🛁","목욕",bath);
   actBtn("👒","꾸미기",cycleAcc);
+  actBtn("🍬","사탕",giveCandy);
+  const dentBtn=actBtn("🦷","치과",dentist);
   actBtn("💃","춤",danceAction);
   actBtn("🎮","게임",startGame);
 
