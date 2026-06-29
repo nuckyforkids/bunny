@@ -52,6 +52,7 @@
   @keyframes gpulse{0%,100%{box-shadow:0 2px 4px rgba(0,0,0,.2);}50%{box-shadow:0 0 11px 3px rgba(207,154,78,.85);}}
 
   .fur{fill:var(--fur,#fff);stroke:var(--furline,#e9dccb);}
+  .furst{stroke:var(--fur,#fff);}
   .hit{cursor:pointer;}
   .ear{transform-box:fill-box;transform-origin:50% 92%;}
   .ear.top{transform-origin:50% 12%;}
@@ -113,6 +114,21 @@
   @keyframes fartfly{0%{opacity:0;transform:translate(0,0) scale(.5);}30%{opacity:.9;}100%{opacity:0;transform:translate(20px,-30px) scale(1.6);}}
   .bathlayer{position:absolute;inset:0;z-index:12;display:none;}
   .bathlayer.on{display:block;cursor:pointer;}
+  .toilet{position:absolute;left:50%;bottom:2px;transform:translateX(-50%) translateY(130%);font-size:clamp(72px,22vw,150px);z-index:6;transition:transform .4s cubic-bezier(.34,1.3,.64,1);pointer-events:none;line-height:1;}
+  .toilet.on{transform:translateX(-50%) translateY(8%);}
+  .char.ontoilet{transform:translateY(-30px);transition:transform .4s;z-index:7;}
+  .closeup{position:fixed;right:6px;top:50%;transform:translate(125%,-50%);width:min(48vw,250px);z-index:36;
+    background:#fffdf7;border:4px solid #ffd98a;border-radius:22px;box-shadow:-4px 0 18px rgba(0,0,0,.3);padding:10px;text-align:center;
+    transition:transform .45s cubic-bezier(.34,1.3,.64,1);}
+  .closeup.on{transform:translate(0,-50%);}
+  .closeup h4{margin:0 0 8px;color:#3f5a3a;font-size:clamp(14px,4vw,17px);}
+  .cubox{position:relative;height:190px;border-radius:14px;background:linear-gradient(#eaf6ff,#dcefe2);overflow:hidden;}
+  .butt{position:absolute;left:50%;top:30px;transform:translateX(-50%);width:130px;height:96px;}
+  .cheek2{position:absolute;top:0;width:74px;height:90px;border-radius:50%;box-shadow:inset -6px -10px 14px rgba(0,0,0,.12),inset 6px 8px 12px rgba(255,255,255,.4);}
+  .hole{position:absolute;left:50%;bottom:6px;transform:translateX(-50%);width:26px;height:16px;border-radius:50%;background:#6b4a36;box-shadow:inset 0 2px 3px rgba(0,0,0,.5);z-index:2;}
+  .hole.pee{width:14px;height:10px;background:#7a5a40;}
+  .cupoop{position:absolute!important;z-index:1;}
+  .cudrop{position:absolute;font-size:22px;z-index:1;transition:transform .7s ease-in,opacity .7s;}
   .drop{position:fixed;font-size:24px;z-index:7;pointer-events:none;transition:transform .6s ease-in,opacity .6s;}
   .wetdrop{position:fixed;font-size:18px;z-index:7;pointer-events:none;opacity:.9;transition:opacity .4s;}
   .sud{position:fixed;font-size:30px;z-index:6;opacity:0;pointer-events:none;}
@@ -165,6 +181,7 @@
 <div id="stage">
   <button class="starbadge" id="starbadge">⭐ <span id="starnum">0</span></button>
   <div class="board" id="board"><div class="board-inner"><h3>⭐ 내 스티커</h3><div class="board-grid" id="boardgrid"></div><button class="board-x" id="boardx">닫기</button></div></div>
+  <div class="closeup" id="closeup"><h4 id="cutitle">응가!</h4><div class="cubox" id="cubox"></div></div>
   <p class="hint" id="hint">위에서 동물을 골라봐! 👆 먹이는 끌어다 주세요 🍴</p>
   <div class="picker" id="picker"></div>
   <div class="foodtop" id="foodtop">
@@ -176,6 +193,7 @@
     <div class="blanket" id="blanket"></div>
     <div class="zzz" id="zzz">💤</div>
     <div class="bathlayer" id="bathlayer"></div>
+    <div class="toilet" id="toilet">🚽</div>
   </div>
   <div class="colors" id="colors"></div>
   <div class="tools"><div class="row" id="foods"></div><div class="row" id="actions"></div></div>
@@ -275,7 +293,7 @@
   function turnAndPoop(c){const svg=c.el;svg.classList.add("turned");blip(600,400,.15,"sine");
     setTimeout(()=>fart(c),350);setTimeout(()=>dropPoop(c),900);setTimeout(()=>svg.classList.remove("turned"),2500);}
   function poop(){const c=selected;if(bathMode){setHint("목욕 먼저 끝내요! 🛁");return;}if(sleeping){setHint("자고 있어요! 먼저 깨워주세요 😴");return;}
-    if((c.feedCount||0)>=10){turnAndPoop(c);c.feedCount=0;c.eaten=[];updateGauge(c);renderTop();}
+    if((c.feedCount||0)>=10){toiletFlow(c,"poop");}
     else setHint("밥을 10개 먹어야 똥이 마려워요! 🍽️");}
   function wipe(){if(bathMode){setHint("목욕 먼저 끝내요! 🛁");return;}if(sleeping){setHint("자고 있어요! 먼저 깨워주세요 😴");return;}
     if(!poops.length){setHint("닦을 똥이 없어요! ✨");return;}
@@ -339,15 +357,15 @@
       </svg>`},
     {key:"monkey",name:"원숭이",emoji:"🐵",cry:"우끼끼!",fur:"#a9794e",line:"#855d39",poop:"banana",foods:[["🍌","바나나"],["🍎","사과"]],svg:`
       <svg viewBox="0 0 400 520" class="creature breathe"><defs><radialGradient id="gl" cx="38%" cy="27%" r="72%"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/></radialGradient><radialGradient id="sh" cx="50%" cy="104%" r="68%"><stop offset="0" stop-color="#000" stop-opacity=".18"/><stop offset=".55" stop-color="#000" stop-opacity="0"/></radialGradient></defs><ellipse cx="200" cy="500" rx="120" ry="18" fill="rgba(0,0,0,0.13)"/>
-        <path d="M300 410 q86 -6 78 -92 q-4 -46 -44 -38 q-30 6 -22 40" fill="none" stroke="#9c6f44" stroke-width="18" stroke-linecap="round"/>
+        <path class="furst" d="M300 410 q86 -6 78 -92 q-4 -46 -44 -38 q-30 6 -22 40" fill="none" stroke-width="18" stroke-linecap="round"/>
         <ellipse class="fur" cx="158" cy="470" rx="30" ry="46" stroke-width="3"/><ellipse class="fur" cx="242" cy="470" rx="30" ry="46" stroke-width="3"/>
         <ellipse cx="150" cy="500" rx="30" ry="16" fill="#ecc89c" stroke="#855d39" stroke-width="3"/><ellipse cx="250" cy="500" rx="30" ry="16" fill="#ecc89c" stroke="#855d39" stroke-width="3"/>
         <g class="ear hit top" style="--d:-1;"><ellipse class="fur" cx="106" cy="375" rx="22" ry="60" stroke-width="3"/><circle cx="106" cy="430" r="22" fill="#ecc89c" stroke="#855d39" stroke-width="3"/></g>
         <g class="ear hit top" style="--d:1;"><ellipse class="fur" cx="294" cy="375" rx="22" ry="60" stroke-width="3"/><circle cx="294" cy="430" r="22" fill="#ecc89c" stroke="#855d39" stroke-width="3"/></g>
         <ellipse class="fur" cx="200" cy="400" rx="98" ry="98" stroke-width="3"/><ellipse cx="200" cy="400" rx="98" ry="98" fill="url(#gl)" pointer-events="none"/><ellipse cx="200" cy="400" rx="98" ry="98" fill="url(#sh)" pointer-events="none"/>
         <ellipse class="belly hit" cx="200" cy="410" rx="62" ry="68" fill="#ecc89c"/>
-        <circle cx="116" cy="180" r="42" fill="#a9794e" stroke="#855d39" stroke-width="3"/><circle cx="116" cy="180" r="24" fill="#ecc89c"/>
-        <circle cx="284" cy="180" r="42" fill="#a9794e" stroke="#855d39" stroke-width="3"/><circle cx="284" cy="180" r="24" fill="#ecc89c"/>
+        <circle class="fur" cx="116" cy="180" r="42" stroke-width="3"/><circle cx="116" cy="180" r="24" fill="#ecc89c"/>
+        <circle class="fur" cx="284" cy="180" r="42" stroke-width="3"/><circle cx="284" cy="180" r="24" fill="#ecc89c"/>
         <circle class="fur head hit" cx="200" cy="200" r="100" stroke-width="3"/><circle cx="200" cy="200" r="100" fill="url(#gl)" pointer-events="none"/><circle cx="200" cy="200" r="100" fill="url(#sh)" pointer-events="none"/>
         <ellipse class="face" cx="200" cy="235" rx="64" ry="54" fill="#ecc89c"/>
         <g class="eyes hit face"><ellipse class="eye" cx="170" cy="188" rx="16" ry="21" fill="#34281f"/><circle cx="176" cy="180" r="5.76" fill="#fff"/><circle cx="165" cy="195" r="3" fill="#fff" opacity=".7"/><ellipse class="eye" cx="230" cy="188" rx="16" ry="21" fill="#34281f"/><circle cx="236" cy="180" r="5.76" fill="#fff"/><circle cx="225" cy="195" r="3" fill="#fff" opacity=".7"/></g>
@@ -360,7 +378,7 @@
         <g class="ear hit top" style="--d:1;"><ellipse class="fur" cx="282" cy="210" rx="33" ry="86" stroke-width="3"/><ellipse cx="282" cy="210" rx="33" ry="86" fill="url(#gl)" pointer-events="none"/><ellipse cx="282" cy="210" rx="33" ry="86" fill="url(#sh)" pointer-events="none"/></g>
         <ellipse class="fur" cx="150" cy="472" rx="30" ry="44" stroke-width="3"/><ellipse class="fur" cx="250" cy="472" rx="30" ry="44" stroke-width="3"/>
         <ellipse class="fur" cx="200" cy="400" rx="100" ry="96" stroke-width="3"/><ellipse cx="200" cy="400" rx="100" ry="96" fill="url(#gl)" pointer-events="none"/><ellipse cx="200" cy="400" rx="100" ry="96" fill="url(#sh)" pointer-events="none"/>
-        <path d="M296 400 q60 -16 50 -68" fill="none" stroke="#e8b06a" stroke-width="16" stroke-linecap="round"/>
+        <path class="furst" d="M296 400 q60 -16 50 -68" fill="none" stroke-width="16" stroke-linecap="round"/>
         <ellipse class="belly hit" cx="200" cy="414" rx="66" ry="66" fill="#f6dcae"/>
         <circle class="fur head hit" cx="200" cy="210" r="106" stroke-width="3"/><circle cx="200" cy="210" r="106" fill="url(#gl)" pointer-events="none"/><circle cx="200" cy="210" r="106" fill="url(#sh)" pointer-events="none"/>
         <ellipse class="face" cx="200" cy="254" rx="52" ry="42" fill="#f6dcae"/>
@@ -375,7 +393,7 @@
         <g class="ear hit" style="--d:1;"><path class="fur" d="M268 116 l26 -64 l-58 24 z" stroke-width="3"/><path d="M272 104 l12 -30 l-26 12 z" fill="#5b6068"/></g>
         <ellipse class="fur" cx="155" cy="470" rx="28" ry="42" stroke-width="3"/><ellipse class="fur" cx="245" cy="470" rx="28" ry="42" stroke-width="3"/>
         <ellipse class="fur" cx="200" cy="400" rx="98" ry="94" stroke-width="3"/><ellipse cx="200" cy="400" rx="98" ry="94" fill="url(#gl)" pointer-events="none"/><ellipse cx="200" cy="400" rx="98" ry="94" fill="url(#sh)" pointer-events="none"/>
-        <path d="M292 412 q72 0 70 -72" fill="none" stroke="#9aa0a6" stroke-width="24" stroke-linecap="round"/>
+        <path class="furst" d="M292 412 q72 0 70 -72" fill="none" stroke-width="24" stroke-linecap="round"/>
         <path d="M334 360 q28 0 28 -34" fill="none" stroke="#5b6068" stroke-width="24" stroke-linecap="round"/>
         <ellipse class="belly hit" cx="200" cy="414" rx="60" ry="62" fill="#d7dade"/>
         <circle class="fur head hit" cx="200" cy="214" r="102" stroke-width="3"/><circle cx="200" cy="214" r="102" fill="url(#gl)" pointer-events="none"/><circle cx="200" cy="214" r="102" fill="url(#sh)" pointer-events="none"/>
@@ -392,7 +410,7 @@
         <g class="ear hit" style="--d:1;"><path class="fur" d="M263 110 l26 -62 l-58 26 z" stroke-width="3"/><path d="M265 106 l13 -32 l-28 14 z" fill="#ffc2d6"/></g>
         <ellipse class="fur" cx="155" cy="470" rx="28" ry="42" stroke-width="3"/><ellipse class="fur" cx="245" cy="470" rx="28" ry="42" stroke-width="3"/>
         <ellipse class="fur" cx="200" cy="400" rx="96" ry="94" stroke-width="3"/><ellipse cx="200" cy="400" rx="96" ry="94" fill="url(#gl)" pointer-events="none"/><ellipse cx="200" cy="400" rx="96" ry="94" fill="url(#sh)" pointer-events="none"/>
-        <path d="M294 420 q70 10 62 -62" fill="none" stroke="#f4a14e" stroke-width="18" stroke-linecap="round"/>
+        <path class="furst" d="M294 420 q70 10 62 -62" fill="none" stroke-width="18" stroke-linecap="round"/>
         <ellipse class="belly hit" cx="200" cy="414" rx="60" ry="64" fill="#ffd9b0"/>
         <circle class="fur head hit" cx="200" cy="214" r="102" stroke-width="3"/><circle cx="200" cy="214" r="102" fill="url(#gl)" pointer-events="none"/><circle cx="200" cy="214" r="102" fill="url(#sh)" pointer-events="none"/>
         <g class="eyes hit face"><ellipse class="eye" cx="165" cy="205" rx="15" ry="21" fill="#34281f"/><circle cx="171" cy="197" r="5.3999999999999995" fill="#fff"/><circle cx="160" cy="212" r="3" fill="#fff" opacity=".7"/><ellipse class="eye" cx="235" cy="205" rx="15" ry="21" fill="#34281f"/><circle cx="241" cy="197" r="5.3999999999999995" fill="#fff"/><circle cx="230" cy="212" r="3" fill="#fff" opacity=".7"/></g>
@@ -470,12 +488,40 @@
       if(c.water>=10){setHint("💧 오줌이 마려워!");setTimeout(()=>pee(c),500);}else setHint("꿀꺽꿀꺽 시원해~ 💧");return;}
     if(c.eaten.length>=10){refuse(c);return;}
     nom();bubble("냠냠!",p.x,p.y);hearts(p.x,p.y);c.api.munch();c.api.react();setHint(`${name} 냠냠! ${em}`);afterFeed(c,em);}
-  function pee(c){const svg=c.el;svg.classList.add("turned");blip(700,500,.12,"sine");
-    setTimeout(()=>{const r=c.el.getBoundingClientRect();const x=r.left+r.width*0.5,y=r.bottom-10;
-      const pd=document.createElement("div");pd.className="puddle";pd.style.left=(x-40)+"px";pd.style.top=(y-6)+"px";stage.appendChild(pd);
-      requestAnimationFrame(()=>pd.classList.add("grow"));pee_sound();bubble("쉬~",x,r.top+r.height*0.6);
-      setHint(c.name+"가 쉬~ 오줌을 쌌어요! 💦");setTimeout(()=>{pd.style.opacity="0";},3000);setTimeout(()=>pd.remove(),3600);},420);
-    setTimeout(()=>{svg.classList.remove("turned");c.water=0;updateWater(c);},2100);}
+  function pee(c){toiletFlow(c,"pee");}
+  // ---- 변기 + 클로즈업 ----
+  const toiletEl=document.getElementById("toilet"),closeup=document.getElementById("closeup"),cutitle=document.getElementById("cutitle"),cubox=document.getElementById("cubox");
+  let toiletBusy=false,cuTimer=null;
+  function toiletFlow(c,type){if(toiletBusy)return;toiletBusy=true;const wrap=c.char;
+    toiletEl.classList.add("on");setHint(c.name+(type==="pee"?"가 변기에서 쉬~ 🚽":"가 변기에 응가하러 가요! 🚽"));blip(500,800,.12,"sine");
+    setTimeout(()=>wrap.classList.add("ontoilet"),350);
+    if(type==="poop")setTimeout(()=>fart(c),820);
+    setTimeout(()=>openCloseup(c,type),850);
+    setTimeout(()=>{closeCloseup();flush();wrap.classList.remove("ontoilet");
+      setTimeout(()=>toiletEl.classList.remove("on"),450);
+      if(type==="poop"){c.feedCount=0;c.eaten=[];updateGauge(c);renderTop();}else{c.water=0;updateWater(c);}
+      updateUI();earnSticker();toiletBusy=false;},4400);}
+  function openCloseup(c,type){
+    const fur=(getComputedStyle(c.el).getPropertyValue("--fur").trim())||"#fff";
+    cutitle.textContent=type==="pee"?"쉬~ 나와요! 💧":"응가 나와요! 💩";
+    cubox.innerHTML=`<div class="butt"><div class="cheek2" style="left:8px;background:${fur}"></div><div class="cheek2" style="right:8px;background:${fur}"></div>`+
+      (type==="pee"?'<div class="hole pee"></div>':'<div class="hole"></div>')+`</div>`;
+    closeup.classList.add("on");let n=0;
+    cuTimer=setInterval(()=>{if(n++>=4){clearInterval(cuTimer);return;}emit(c,type);},650);emit(c,type);}
+  function emit(c,type){
+    if(type==="pee"){const e=document.createElement("div");e.className="cudrop";e.textContent="💧";
+      e.style.left="calc(50% - 10px)";e.style.top="118px";cubox.appendChild(e);
+      requestAnimationFrame(()=>{e.style.transform="translateY(70px)";});setTimeout(()=>{e.style.opacity="0";},700);setTimeout(()=>e.remove(),1000);
+      pee_sound();return;}
+    const M={banana:["nana","🍌"],log:["log",""],bigball:["bigball",""],splat:["splat",""],pellet:["pellet",""]};
+    const sh=M[c.poop]||M.pellet;const e=document.createElement("div");e.className="cupoop poop "+sh[0];if(sh[1])e.textContent=sh[1];
+    e.style.left="calc(50% - 10px)";e.style.top="112px";cubox.appendChild(e);
+    requestAnimationFrame(()=>{e.style.transform="translateY(60px)";});setTimeout(()=>{e.style.opacity="0";},800);setTimeout(()=>e.remove(),1200);toot();}
+  function closeCloseup(){if(cuTimer)clearInterval(cuTimer);closeup.classList.remove("on");}
+  function flush(){A();const t=ac.currentTime;const nb=ac.createBufferSource();const n=ac.sampleRate*0.6;const buf=ac.createBuffer(1,n,ac.sampleRate);
+    const d=buf.getChannelData(0);for(let i=0;i<n;i++)d[i]=(Math.random()*2-1)*(1-i/n);nb.buffer=buf;
+    const f=ac.createBiquadFilter();f.type="bandpass";f.frequency.value=600;const g=ac.createGain();g.gain.value=.25;
+    nb.connect(f);f.connect(g);g.connect(ac.destination);nb.start(t);nb.stop(t+0.6);}
   function pee_sound(){A();const t=ac.currentTime;const o=ac.createOscillator(),g=ac.createGain();o.type="triangle";
     o.frequency.setValueAtTime(900,t);o.frequency.linearRampToValueAtTime(600,t+1.0);o.connect(g);g.connect(ac.destination);
     g.gain.setValueAtTime(.12,t);g.gain.setValueAtTime(.12,t+.9);g.gain.exponentialRampToValueAtTime(.0001,t+1.1);o.start(t);o.stop(t+1.15);}
