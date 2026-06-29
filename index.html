@@ -45,6 +45,8 @@
     box-shadow:0 2px 4px rgba(0,0,0,.2);overflow:hidden;display:flex;align-items:center;justify-content:center;}
   .gfill{position:absolute;left:0;top:0;height:100%;width:0;background:#ffd98a;transition:width .3s;}
   .gfill.gwf{background:#a9dcff;}
+  .gfill.gcf{background:#ffc2dd;}
+  .gcandy.full .gfill{background:#ff6fae;}
   .gpoop.full .gfill{background:#cf9a4e;width:100%;}
   .gwater.full .gfill{background:#4ea3e0;width:100%;}
   .gtxt{position:relative;font-size:10px;font-weight:800;color:#5a4632;font-variant-numeric:tabular-nums;}
@@ -100,6 +102,13 @@
   .teethrow i{width:16px;height:28px;background:#fff;border-radius:4px 4px 7px 7px;border:1px solid #e2d8c8;display:block;}
   .brush{position:absolute;left:50%;top:48%;font-size:48px;animation:brushmove 1.8s ease;}
   @keyframes brushmove{0%,100%{transform:translate(calc(-50% - 46px),-50%) rotate(-10deg);}25%{transform:translate(calc(-50% + 40px),-50%) rotate(10deg);}50%{transform:translate(calc(-50% - 40px),-50%) rotate(-10deg);}75%{transform:translate(calc(-50% + 40px),-50%) rotate(10deg);}}
+  .toothtop{position:absolute;left:50%;top:54%;transform:translate(-50%,-50%);width:112px;height:112px;border-radius:38px;background:radial-gradient(circle at 40% 34%,#fff,#e9e6d8);box-shadow:inset 0 4px 10px rgba(0,0,0,.12),0 3px 8px rgba(0,0,0,.25);}
+  .toothtop::before{content:"";position:absolute;left:50%;top:16%;width:3px;height:68%;background:rgba(0,0,0,.10);transform:translateX(-50%);}
+  .toothtop::after{content:"";position:absolute;top:50%;left:16%;width:68%;height:3px;background:rgba(0,0,0,.10);transform:translateY(-50%);}
+  .drillbit{position:absolute;left:50%;top:30px;width:12px;height:96px;border-radius:5px;background:linear-gradient(#cfd6dd,#8c97a4);transform:translate(-50%,-70px);animation:drilldown 1.9s ease;z-index:4;}
+  .drillbit::after{content:"";position:absolute;bottom:-9px;left:-4px;width:20px;height:18px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#fff,#7a7a7a);animation:burr .08s linear infinite;}
+  @keyframes drilldown{0%{transform:translate(-50%,-70px);}34%{transform:translate(-50%,2px);}45%{transform:translate(-50%,7px);}56%{transform:translate(-50%,2px);}67%{transform:translate(-50%,7px);}100%{transform:translate(-50%,-70px);}}
+  @keyframes burr{0%{transform:rotate(0) scale(1);}50%{transform:scale(1.18);}100%{transform:rotate(180deg) scale(1);}}
   .creature.dance{animation:dance 1.5s ease;}
   @keyframes dance{0%,100%{transform:rotate(0) translateY(0);}12%{transform:rotate(-9deg) translateY(-8px);}25%{transform:rotate(9deg) translateY(0);}40%{transform:rotate(-9deg) translateY(-8px);}55%{transform:rotate(9deg) translateY(0);}70%{transform:rotate(-7deg) translateY(-5px);}85%{transform:rotate(7deg);}}
   .creature.refuse{animation:refuse .55s ease;}
@@ -307,12 +316,15 @@
   // ---- gauge / poop ----
   function addGauge(wrap){const box=document.createElement("div");box.className="gauges";
     box.innerHTML=`<div class="gauge gpoop"><div class="gfill"></div><span class="gtxt">💩 0/10</span></div>`+
-      `<div class="gauge gwater"><div class="gfill gwf"></div><span class="gtxt">💧 0/10</span></div>`;
-    wrap.appendChild(box);return {poop:box.querySelector(".gpoop"),water:box.querySelector(".gwater")};}
+      `<div class="gauge gwater"><div class="gfill gwf"></div><span class="gtxt">💧 0/10</span></div>`+
+      `<div class="gauge gcandy"><div class="gfill gcf"></div><span class="gtxt">🍬 0/10</span></div>`;
+    wrap.appendChild(box);return {poop:box.querySelector(".gpoop"),water:box.querySelector(".gwater"),candy:box.querySelector(".gcandy")};}
   function updateGauge(c){const mx=c.max||10;const n=Math.min(c.feedCount||0,mx);c.gauge.querySelector(".gfill").style.width=(n/mx*100)+"%";
     c.gauge.querySelector(".gtxt").textContent=`💩 ${n}/${mx}`;c.gauge.classList.toggle("full",n>=mx);}
   function updateWater(c){const mx=c.max||10;const n=Math.min(c.water||0,mx);const g=c.gauges.water;g.querySelector(".gfill").style.width=(n/mx*100)+"%";
     g.querySelector(".gtxt").textContent=`💧 ${n}/${mx}`;g.classList.toggle("full",n>=mx);}
+  function updateCandy(c){const n=Math.min(c.candy||0,10);const g=c.gauges.candy;g.querySelector(".gfill").style.width=(n*10)+"%";
+    g.querySelector(".gtxt").textContent=`🍬 ${n}/10`;g.classList.toggle("full",n>=10);}
   function dropPoop(c){const r=c.el.getBoundingClientRect();const baseX=r.left+r.width*0.5,topY=r.top+r.height*0.88,groundY=r.bottom+4;toot();
     const T={
       banana:{cls:"nana",txt:"🍌",n:2,sp:16,rot:true,b:"뿌직!",h:"바나나 똥"},
@@ -361,8 +373,8 @@
   // ---- 사탕 → 충치 → 치과 ----
   function giveCandy(){const c=selected;if(bathMode){setHint("목욕 먼저 끝내요! 🛁");return;}if(sleeping){setHint("자고 있어요! 먼저 깨워주세요 😴");return;}
     if(c.cavity){blip(220,160,.15,"square");bubble("아야! 🦷",mouthOf(c.el).x,mouthOf(c.el).y);setHint(c.name+" 이가 아파서 못 먹어요! 치과 가야 해요 🦷");return;}
-    c.candy=(c.candy||0)+1;c.api.munch();const p=mouthOf(c.el);blip(900,1200,.08,"sine");bubble("사탕! 🍬",p.x,p.y);
-    if(c.candy>=10){setCavity(c);}else setHint(`${c.name} 사탕 ${c.candy}개… 너무 많이 먹으면 충치 생겨요! 🍬`);}
+    c.candy=(c.candy||0)+1;c.api.munch();const p=mouthOf(c.el);blip(900,1200,.08,"sine");bubble("사탕! 🍬",p.x,p.y);updateCandy(c);
+    if(c.candy>=10){setCavity(c);}else setHint(`${c.name} 사탕 ${c.candy}/10… 많이 먹으면 충치 생겨요! 🍬`);}
   const FACES={
     rabbit:{lx:158,ly:214,rx:242,mx:200,my:274,sx:240,sy:262},
     monkey:{lx:170,ly:188,rx:230,mx:200,my:258,sx:226,sy:250},
@@ -385,7 +397,7 @@
   function setCavity(c){c.cavity=true;c.el.classList.add("sad");injectPain(c);
     blip(200,140,.3,"sawtooth");bubble("아야! 이가 아파 😣🦷",mouthOf(c.el).x,mouthOf(c.el).y-10);say("아야 이가 아파");
     setHint(c.name+" 충치 생겼어요! 😣 볼이 부었어요! 치과(🦷)에서 치료해요!");updateUI();}
-  function clearCavity(c){c.cavity=false;c.candy=0;c.el.classList.remove("sad");clearPain(c);updateUI();}
+  function clearCavity(c){c.cavity=false;c.candy=0;c.el.classList.remove("sad");clearPain(c);updateCandy(c);updateUI();}
   function drillSound(){A();const t=ac.currentTime;const o=ac.createOscillator(),g=ac.createGain(),l=ac.createOscillator(),lg=ac.createGain();
     o.type="sawtooth";o.frequency.value=140;l.frequency.value=30;lg.gain.value=40;l.connect(lg);lg.connect(o.frequency);
     o.connect(g);g.connect(ac.destination);g.gain.setValueAtTime(.16,t);g.gain.setValueAtTime(.16,t+1.4);g.gain.exponentialRampToValueAtTime(.0001,t+1.6);
@@ -393,7 +405,7 @@
   function dentist(){const c=selected;if(bathMode){setHint("목욕 먼저 끝내요! 🛁");return;}if(sleeping){setHint("자고 있어요! 먼저 깨워주세요 😴");return;}
     if(!c.cavity){setHint(c.name+" 이가 튼튼해요! 충치 없어요 😁🦷");return;}
     cutitle.textContent="충치 치료중! 드릴 🦷";
-    cubox.innerHTML=`<div class="toothbox"><div class="bigtooth">🦷<div class="cavity" id="cav"></div></div><div class="drill">🪛</div></div>`;
+    cubox.innerHTML=`<div class="toothbox"><div class="toothtop"><div class="cavity" id="cav"></div></div><div class="drillbit"></div></div>`;
     closeup.classList.add("on");drillSound();setHint(c.name+" 치과에서 충치 치료중... 🦷");
     setTimeout(()=>{const cav=document.getElementById("cav");if(cav)cav.style.transform="translate(-50%,-50%) scale(0)";},800);
     setTimeout(()=>{const bx=cubox.querySelector(".bigtooth");if(bx){const sp=document.createElement("div");sp.textContent="✨";sp.style.cssText="position:absolute;left:50%;top:30%;transform:translate(-50%,-50%);font-size:44px;";bx.appendChild(sp);}},1500);
@@ -407,7 +419,7 @@
     const box=cubox.querySelector(".teethbox");let k=0;cuTimer=setInterval(()=>{if(k++>=5||!box){clearInterval(cuTimer);return;}
       const f=document.createElement("div");f.textContent="🫧";f.style.cssText=`position:absolute;left:${30+Math.random()*60}%;top:${40+Math.random()*25}%;font-size:24px;`;box.appendChild(f);setTimeout(()=>f.remove(),700);},300);
     setTimeout(()=>{const bx=cubox.querySelector(".teethbox");if(bx){const sp=document.createElement("div");sp.textContent="✨";sp.style.cssText="position:absolute;left:50%;top:34%;transform:translate(-50%,-50%);font-size:42px;";bx.appendChild(sp);}},1600);
-    setTimeout(()=>{closeup.classList.remove("on");if(!c.cavity)c.candy=0;c.api.react();const r=c.el.getBoundingClientRect();
+    setTimeout(()=>{closeup.classList.remove("on");if(!c.cavity)c.candy=0;updateCandy(c);c.api.react();const r=c.el.getBoundingClientRect();
       hearts(r.left+r.width/2,r.top+r.height*0.4);bubble("반짝! 😁✨",r.left+r.width/2,r.top+r.height*0.35);
       setHint(c.cavity?(c.name+" 치카치카! 그래도 충치는 치과(🦷)에서!"):(c.name+" 치카치카! 이가 반짝! 충치 예방 ✨🪥"));earnSticker();updateUI();},2200);}
   function melody(){[523,587,659,784,659,587].forEach((f,i)=>setTimeout(()=>blip(f,f,.12,"triangle"),i*150));}
@@ -507,8 +519,8 @@
       </svg>`},
     {key:"raccoon",name:"너구리",emoji:"🦝",cry:"끼끼!",fur:"#9aa0a6",line:"#6f757c",poop:"pellet",foods:[["🐟","생선"],["🌽","옥수수"]],svg:`
       <svg viewBox="0 0 400 520" class="creature breathe"><defs><radialGradient id="gl" cx="38%" cy="27%" r="72%"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/></radialGradient><radialGradient id="sh" cx="50%" cy="104%" r="68%"><stop offset="0" stop-color="#000" stop-opacity=".18"/><stop offset=".55" stop-color="#000" stop-opacity="0"/></radialGradient></defs><ellipse cx="200" cy="500" rx="120" ry="18" fill="rgba(0,0,0,0.13)"/>
-        <g class="ear hit" style="--d:-1;"><path class="fur" d="M132 116 l-26 -64 l58 24 z" stroke-width="3"/><path d="M128 104 l-12 -30 l26 12 z" fill="#5b6068"/></g>
-        <g class="ear hit" style="--d:1;"><path class="fur" d="M268 116 l26 -64 l-58 24 z" stroke-width="3"/><path d="M272 104 l12 -30 l-26 12 z" fill="#5b6068"/></g>
+        <g class="ear hit" style="--d:-1;"><path class="fur" d="M140 134 L116 58 L192 118 Z" stroke-width="3"/><path d="M148 126 L131 78 L184 114 Z" fill="#5b6068"/></g>
+        <g class="ear hit" style="--d:1;"><path class="fur" d="M260 134 L284 58 L208 118 Z" stroke-width="3"/><path d="M252 126 L269 78 L216 114 Z" fill="#5b6068"/></g>
         <ellipse class="fur" cx="155" cy="470" rx="28" ry="42" stroke-width="3"/><ellipse class="fur" cx="245" cy="470" rx="28" ry="42" stroke-width="3"/>
         <ellipse class="fur" cx="200" cy="400" rx="98" ry="94" stroke-width="3"/><ellipse cx="200" cy="400" rx="98" ry="94" fill="url(#gl)" pointer-events="none"/><ellipse cx="200" cy="400" rx="98" ry="94" fill="url(#sh)" pointer-events="none"/>
         <path class="furst" d="M292 412 q72 0 70 -72" fill="none" stroke-width="24" stroke-linecap="round"/>
@@ -524,8 +536,8 @@
       </svg>`},
     {key:"cat",name:"고양이",emoji:"🐱",cry:"야옹~",fur:"#f4a14e",line:"#d4822f",poop:"pellet",foods:[["🐟","생선"],["🥛","우유"]],svg:`
       <svg viewBox="0 0 400 520" class="creature breathe"><defs><radialGradient id="gl" cx="38%" cy="27%" r="72%"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/></radialGradient><radialGradient id="sh" cx="50%" cy="104%" r="68%"><stop offset="0" stop-color="#000" stop-opacity=".18"/><stop offset=".55" stop-color="#000" stop-opacity="0"/></radialGradient></defs><ellipse cx="200" cy="500" rx="120" ry="18" fill="rgba(0,0,0,0.13)"/>
-        <g class="ear hit" style="--d:-1;"><path class="fur" d="M137 110 l-26 -62 l58 26 z" stroke-width="3"/><path d="M135 106 l-13 -32 l28 14 z" fill="#ffc2d6"/></g>
-        <g class="ear hit" style="--d:1;"><path class="fur" d="M263 110 l26 -62 l-58 26 z" stroke-width="3"/><path d="M265 106 l13 -32 l-28 14 z" fill="#ffc2d6"/></g>
+        <g class="ear hit" style="--d:-1;"><path class="fur" d="M142 132 L120 56 L188 116 Z" stroke-width="3"/><path d="M150 124 L133 76 L178 112 Z" fill="#ffc2d6"/></g>
+        <g class="ear hit" style="--d:1;"><path class="fur" d="M258 132 L280 56 L212 116 Z" stroke-width="3"/><path d="M250 124 L267 76 L222 112 Z" fill="#ffc2d6"/></g>
         <ellipse class="fur" cx="155" cy="470" rx="28" ry="42" stroke-width="3"/><ellipse class="fur" cx="245" cy="470" rx="28" ry="42" stroke-width="3"/>
         <ellipse class="fur" cx="200" cy="400" rx="96" ry="94" stroke-width="3"/><ellipse cx="200" cy="400" rx="96" ry="94" fill="url(#gl)" pointer-events="none"/><ellipse cx="200" cy="400" rx="96" ry="94" fill="url(#sh)" pointer-events="none"/>
         <path class="furst" d="M294 420 q70 10 62 -62" fill="none" stroke-width="18" stroke-linecap="round"/>
@@ -586,7 +598,7 @@
     if(gameOn)stopGame();
     if(bathMode){bathMode=false;bathLayer.classList.remove("on");clearWet();}
     if(toiletDirty||needWipe){toiletDirty=false;needWipe=false;closeup.classList.remove("on");toiletEl.classList.remove("on");}
-    c.api.openEyes();buildFoods(c);updateWater(c);renderAcc(c);renderTop();updateUI();setHint(c.name+" 친구랑 놀자! "+c.emoji);}
+    c.api.openEyes();buildFoods(c);updateWater(c);updateCandy(c);renderAcc(c);renderTop();updateUI();setHint(c.name+" 친구랑 놀자! "+c.emoji);}
   function setBtn(btn,on){if(!btn)return;btn.style.display=on?"flex":"none";btn.classList.toggle("big",on);}
   function updateUI(){const full=selected&&selected.eaten.length>=selected.max;const waterFull=selected&&selected.water>=selected.max;const cav=selected&&selected.cavity;
     const busy=full||waterFull||toiletDirty||needWipe;
