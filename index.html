@@ -40,7 +40,7 @@
   .zzz.on{opacity:1;animation:zfloat 2.4s ease-in-out infinite;}
   @keyframes zfloat{0%,100%{transform:translateX(-50%) translateY(0);}50%{transform:translateX(-50%) translateY(-12px);}}
 
-  .gauges{position:absolute;top:-38px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;gap:3px;z-index:8;}
+  .gauges{position:fixed;left:6px;top:36%;transform:none;display:flex;flex-direction:column;gap:5px;z-index:9;}
   .gauge{position:relative;width:92px;height:16px;background:#fff;border-radius:9px;
     box-shadow:0 2px 4px rgba(0,0,0,.2);overflow:hidden;display:flex;align-items:center;justify-content:center;}
   .gfill{position:absolute;left:0;top:0;height:100%;width:0;background:#ffd98a;transition:width .3s;}
@@ -83,6 +83,8 @@
     45%{transform:translateY(-120px) scaleY(1.1) scaleX(.92) rotate(-3deg);}72%{transform:translateY(0) scaleY(.86) scaleX(1.08);}100%{transform:translateY(0) scaleY(1);}}
   .mouth-g.munch{animation:munch .45s ease 3;}
   @keyframes munch{0%,100%{transform:translateY(0);}50%{transform:translateY(3px);}}
+  .creature.dance{animation:dance 1.5s ease;}
+  @keyframes dance{0%,100%{transform:rotate(0) translateY(0);}12%{transform:rotate(-9deg) translateY(-8px);}25%{transform:rotate(9deg) translateY(0);}40%{transform:rotate(-9deg) translateY(-8px);}55%{transform:rotate(9deg) translateY(0);}70%{transform:rotate(-7deg) translateY(-5px);}85%{transform:rotate(7deg);}}
   .creature.refuse{animation:refuse .55s ease;}
   @keyframes refuse{0%,100%{transform:translateX(0) rotate(0);}18%{transform:translateX(-14px) rotate(-4deg);}38%{transform:translateX(14px) rotate(4deg);}58%{transform:translateX(-11px) rotate(-3deg);}78%{transform:translateX(11px) rotate(3deg);}}
 
@@ -129,6 +131,10 @@
   .hole.pee{width:14px;height:10px;background:#7a5a40;}
   .cupoop{position:absolute!important;z-index:1;}
   .cudrop{position:absolute;font-size:22px;z-index:1;transition:transform .7s ease-in,opacity .7s;}
+  .smudge{position:absolute;border-radius:50%;background:radial-gradient(circle at 40% 35%,#a9744a,#6e4422);transition:opacity .5s;z-index:3;}
+  .smudge.gone{opacity:0;}
+  .wipetissue{position:absolute;left:50%;top:60%;font-size:42px;z-index:4;animation:wscrub 1.9s ease;}
+  @keyframes wscrub{0%,100%{transform:translate(-50%,-50%) rotate(-12deg);}20%{transform:translate(-92%,-55%) rotate(10deg);}40%{transform:translate(-12%,-50%) rotate(-10deg);}60%{transform:translate(-80%,-58%) rotate(9deg);}80%{transform:translate(-20%,-48%) rotate(-8deg);}}
   .bowl{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:158px;height:124px;border-radius:50%;
     background:#fff;box-shadow:inset 0 5px 12px rgba(0,0,0,.18),0 3px 8px rgba(0,0,0,.2);display:flex;align-items:center;justify-content:center;}
   .water{position:relative;width:112px;height:86px;border-radius:50%;overflow:hidden;
@@ -311,11 +317,33 @@
     else setHint("밥을 10개 먹어야 똥이 마려워요! 🍽️");}
   function wipe(){if(bathMode){setHint("목욕 먼저 끝내요! 🛁");return;}if(sleeping){setHint("자고 있어요! 먼저 깨워주세요 😴");return;}
     const r=selected.el.getBoundingClientRect();const cx=r.left+r.width*0.5;
+    // 화면 속 동물도 살짝 닦기
     const t=document.createElement("div");t.className="tissue";t.textContent="🧻";
     t.style.left=cx+"px";t.style.top=(r.top+r.height*0.80)+"px";stage.appendChild(t);
     requestAnimationFrame(()=>t.classList.add("scrub"));swish();setHint(selected.name+" 똥꼬 쓱쓱 닦아요! 🧻");
-    setTimeout(()=>{t.style.top=(r.top+r.height*0.58)+"px";t.classList.remove("scrub");void t.offsetWidth;t.classList.add("scrub");swish();setHint(selected.name+" 앞도 쓱쓱! 🧻");},950);
-    setTimeout(()=>{t.remove();hearts(cx,r.top+r.height*0.5);bubble("뽀송! ✨",cx,r.top+r.height*0.42);setHint(selected.name+" 깨끗하게 닦았어요! ✨🧻");earnSticker();},1900);}
+    setTimeout(()=>{t.style.top=(r.top+r.height*0.58)+"px";t.classList.remove("scrub");void t.offsetWidth;t.classList.add("scrub");},950);
+    setTimeout(()=>{t.remove();},1900);
+    wipeCloseup(selected);}
+  function wipeCloseup(c){
+    const fur=(getComputedStyle(c.el).getPropertyValue("--fur").trim())||"#fff";
+    cutitle.textContent="쓱쓱 깨끗하게! 🧻";
+    cubox.innerHTML=`<div class="butt"><div class="cheek2" style="left:8px;background:${fur}"></div><div class="cheek2" style="right:8px;background:${fur}"></div><div class="hole"></div>`+
+      `<div class="smudge" style="width:14px;height:11px;left:54px;bottom:18px;"></div><div class="smudge" style="width:10px;height:8px;left:74px;bottom:24px;"></div>`+
+      `<div class="wipetissue">🧻</div></div>`;
+    closeup.classList.add("on");swish();
+    setTimeout(()=>{swish();},700);
+    setTimeout(()=>{cubox.querySelectorAll(".smudge").forEach(s=>s.classList.add("gone"));},900);
+    setTimeout(()=>{const w=cubox.querySelector(".water");const bx=cubox.querySelector(".butt");if(bx){const sp=document.createElement("div");sp.textContent="✨";sp.style.cssText="position:absolute;left:50%;top:30%;transform:translate(-50%,-50%);font-size:40px;";bx.appendChild(sp);}},1500);
+    setTimeout(()=>{closeup.classList.remove("on");hearts(c.el.getBoundingClientRect().left+c.el.getBoundingClientRect().width*0.5,c.el.getBoundingClientRect().top+100);setHint(c.name+" 뽀송뽀송 깨끗! ✨🧻");earnSticker();},2200);}
+  function melody(){[523,587,659,784,659,587].forEach((f,i)=>setTimeout(()=>blip(f,f,.12,"triangle"),i*150));}
+  function danceAction(){if(bathMode){setHint("목욕 먼저 끝내요! 🛁");return;}if(sleeping){setHint("자고 있어요! 먼저 깨워주세요 😴");return;}
+    const svg=selected.el;svg.classList.remove("dance");void svg.offsetWidth;svg.classList.add("dance");
+    svg.addEventListener("animationend",()=>svg.classList.remove("dance"),{once:true});
+    const r=svg.getBoundingClientRect();const notes=["🎵","🎶","⭐","💕","🎵"];
+    for(let i=0;i<6;i++)setTimeout(()=>{const e=document.createElement("div");e.className="heart";e.textContent=notes[i%notes.length];
+      e.style.left=(r.left+r.width*(0.15+Math.random()*0.7))+"px";e.style.top=(r.top+r.height*0.3)+"px";stage.appendChild(e);
+      requestAnimationFrame(()=>e.classList.add("go"));setTimeout(()=>e.remove(),1400);},i*160);
+    melody();setHint(selected.name+" 신나게 춤춰요! 💃🎶");}
 
   // ---- creature factory ----
   const EARC=["a-perk","a-flop","a-flap","a-twitch"];
@@ -683,6 +711,7 @@
     else{blanket.classList.remove("on");zzz.classList.remove("on");selected.api.openEyes();selected.api.blink(2);boing();setHint("잘 잤다! 안녕 "+selected.emoji);}});
   actBtn("🛁","목욕",bath);
   actBtn("👒","꾸미기",cycleAcc);
+  actBtn("💃","춤",danceAction);
   actBtn("🎮","게임",startGame);
 
   // ---- colors ----
