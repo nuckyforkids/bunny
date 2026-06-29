@@ -111,6 +111,10 @@
   .fartpuff{position:fixed;z-index:6;font-size:26px;pointer-events:none;opacity:0;}
   .fartpuff.go{animation:fartfly .9s ease forwards;}
   @keyframes fartfly{0%{opacity:0;transform:translate(0,0) scale(.5);}30%{opacity:.9;}100%{opacity:0;transform:translate(20px,-30px) scale(1.6);}}
+  .bathlayer{position:absolute;inset:0;z-index:12;display:none;}
+  .bathlayer.on{display:block;cursor:pointer;}
+  .drop{position:fixed;font-size:24px;z-index:7;pointer-events:none;transition:transform .6s ease-in,opacity .6s;}
+  .wetdrop{position:fixed;font-size:18px;z-index:7;pointer-events:none;opacity:.9;transition:opacity .4s;}
   .sud{position:fixed;font-size:30px;z-index:6;opacity:0;pointer-events:none;}
   .sud.go{animation:sudrise 1.4s ease forwards;}
   @keyframes sudrise{0%{opacity:0;transform:translateY(0) scale(.4);}30%{opacity:.95;}100%{opacity:0;transform:translateY(-54px) scale(1.3);}}
@@ -171,6 +175,7 @@
     <div class="gamebar" id="gamebar"><span class="gs" id="gscore">🎮 0</span><button class="gx" id="gexit">끝내기</button></div>
     <div class="blanket" id="blanket"></div>
     <div class="zzz" id="zzz">💤</div>
+    <div class="bathlayer" id="bathlayer"></div>
   </div>
   <div class="colors" id="colors"></div>
   <div class="tools"><div class="row" id="foods"></div><div class="row" id="actions"></div></div>
@@ -242,7 +247,7 @@
     c.gauge.querySelector(".gtxt").textContent=`💩 ${n}/10`;c.gauge.classList.toggle("full",n>=10);}
   function updateWater(c){const n=Math.min(c.water||0,10);const g=c.gauges.water;g.querySelector(".gfill").style.width=(n*10)+"%";
     g.querySelector(".gtxt").textContent=`💧 ${n}/10`;g.classList.toggle("full",n>=10);}
-  function dropPoop(c){const r=c.el.getBoundingClientRect();const baseX=r.left+r.width*0.5,topY=r.top+r.height*0.74,groundY=r.bottom-6;toot();
+  function dropPoop(c){const r=c.el.getBoundingClientRect();const baseX=r.left+r.width*0.5,topY=r.top+r.height*0.88,groundY=r.bottom+4;toot();
     const T={
       banana:{cls:"nana",txt:"🍌",n:2,sp:16,rot:true,b:"뿌직!",h:"바나나 똥"},
       log:{cls:"log",n:2,sp:0,stack:true,b:"끄응~",h:"굵은 똥"},
@@ -260,7 +265,7 @@
     bubble(t.b,baseX,topY-10);setHint(c.name+"가 "+t.h+"을 쌌어요! 💩 (휴지로 닦아줘)");
     updateUI();
   }
-  function fart(c){const r=c.el.getBoundingClientRect();const x=r.left+r.width*0.5,y=r.top+r.height*0.7;
+  function fart(c){const r=c.el.getBoundingClientRect();const x=r.left+r.width*0.5,y=r.top+r.height*0.86;
     for(let i=0;i<3;i++){const el=document.createElement("div");el.className="fartpuff";el.textContent="💨";
       el.style.left=(x-14+(i-1)*10)+"px";el.style.top=y+"px";stage.appendChild(el);
       requestAnimationFrame(()=>el.classList.add("go"));setTimeout(()=>el.remove(),900);}
@@ -269,10 +274,10 @@
     g.gain.setValueAtTime(.22,t);g.gain.exponentialRampToValueAtTime(.0001,t+.4);o.start(t);o.stop(t+.42);bubble("뿡~",x,y-10);}
   function turnAndPoop(c){const svg=c.el;svg.classList.add("turned");blip(600,400,.15,"sine");
     setTimeout(()=>fart(c),350);setTimeout(()=>dropPoop(c),900);setTimeout(()=>svg.classList.remove("turned"),2500);}
-  function poop(){const c=selected;if(sleeping){setHint("자고 있어요! 먼저 깨워주세요 😴");return;}
+  function poop(){const c=selected;if(bathMode){setHint("목욕 먼저 끝내요! 🛁");return;}if(sleeping){setHint("자고 있어요! 먼저 깨워주세요 😴");return;}
     if((c.feedCount||0)>=10){turnAndPoop(c);c.feedCount=0;c.eaten=[];updateGauge(c);renderTop();}
     else setHint("밥을 10개 먹어야 똥이 마려워요! 🍽️");}
-  function wipe(){if(sleeping){setHint("자고 있어요! 먼저 깨워주세요 😴");return;}
+  function wipe(){if(bathMode){setHint("목욕 먼저 끝내요! 🛁");return;}if(sleeping){setHint("자고 있어요! 먼저 깨워주세요 😴");return;}
     if(!poops.length){setHint("닦을 똥이 없어요! ✨");return;}
     let cx=0,cy=0;poops.forEach(p=>{const r=p.getBoundingClientRect();cx+=r.left+r.width/2;cy+=r.top+r.height/2;});cx/=poops.length;cy/=poops.length;
     const t=document.createElement("div");t.className="tissue";t.textContent="🧻";t.style.left=cx+"px";t.style.top=cy+"px";stage.appendChild(t);swish();
@@ -442,6 +447,7 @@
     picker.querySelectorAll(".pk").forEach(b=>b.setAttribute("aria-pressed",b.dataset.key===c.key));
     scene.style.background=BG[c.key]||BG.rabbit;
     if(gameOn)stopGame();
+    if(bathMode){bathMode=false;bathLayer.classList.remove("on");clearWet();}
     c.api.openEyes();buildFoods(c);updateWater(c);renderAcc(c);renderTop();updateUI();setHint(c.name+" 친구랑 놀자! "+c.emoji);}
   function updateUI(){const full=selected&&selected.eaten.length>=10;const dirty=poops.length>0;
     foodsEl.style.display=(full||dirty)?"none":"flex";
@@ -510,14 +516,51 @@
   starbadge.addEventListener("click",openBoard);
   document.getElementById("boardx").addEventListener("click",()=>board.classList.remove("on"));
 
-  // ---- bath ----
-  function bath(){if(sleeping){setHint("자고 있어요! 먼저 깨워주세요 😴");return;}
-    const r=selected.el.getBoundingClientRect();
-    for(let i=0;i<12;i++){const b=document.createElement("div");b.className="sud";b.textContent=Math.random()<.5?"🫧":"🧼";
-      b.style.left=(r.left+Math.random()*r.width)+"px";b.style.top=(r.top+r.height*0.3+Math.random()*r.height*0.5)+"px";
-      stage.appendChild(b);setTimeout(()=>{b.classList.add("go");},i*60);setTimeout(()=>b.remove(),i*60+1400);}
-    swish();selected.api.react();bubble("뽀득뽀득!",r.left+r.width/2,r.top+r.height*0.3);
-    setTimeout(()=>{hearts(r.left+r.width/2,r.top+r.height*0.35);setHint(selected.name+" 깨끗해졌어요! ✨🛁");earnSticker();},1000);}
+  // ---- 목욕 (8단계) ----
+  const bathLayer=document.getElementById("bathlayer");
+  let bathMode=false,bathStep=0,bathDrops=[];
+  const BATH=[
+    {h:"① 손에 비누 칠하기! 톡톡 🧼 (토끼를 눌러)",fx:"soap"},
+    {h:"② 거품으로 몸을 씻어요! 🫧",fx:"wash"},
+    {h:"③ 머리에 샴푸 묻히기! 🧴",fx:"shampoo"},
+    {h:"④ 물로 샴푸 헹구기! 💧",fx:"rinseH"},
+    {h:"⑤ 몸에 샤워젤 바르기! 🧴",fx:"gel"},
+    {h:"⑥ 물로 몸 헹구기! 💧",fx:"rinseB"},
+    {h:"⑦ 수건으로 물기 닦기! 🟦",fx:"towel"},
+    {h:"⑧ 드라이기로 보송보송 말리기! 💨",fx:"dry"},
+  ];
+  function puff(emoji,x,y,cls){const e=document.createElement("div");e.className=cls||"sud";e.textContent=emoji;
+    e.style.left=x+"px";e.style.top=y+"px";stage.appendChild(e);requestAnimationFrame(()=>e.classList.add("go"));
+    setTimeout(()=>e.remove(),1400);return e;}
+  function dropFall(x,y){const e=document.createElement("div");e.className="drop";e.textContent="💧";
+    e.style.left=x+"px";e.style.top=y+"px";stage.appendChild(e);
+    requestAnimationFrame(()=>{e.style.transform="translateY(60px)";e.style.opacity="0";});setTimeout(()=>e.remove(),650);}
+  function addWet(r){for(let i=0;i<3;i++){const e=document.createElement("div");e.className="wetdrop";e.textContent="💧";
+    e.style.left=(r.left+r.width*(0.3+Math.random()*0.4))+"px";e.style.top=(r.top+r.height*(0.4+Math.random()*0.4))+"px";
+    stage.appendChild(e);bathDrops.push(e);}}
+  function clearWet(n){const rm=(n==null)?bathDrops:bathDrops.splice(0,n);(n==null?bathDrops:rm).forEach(e=>{e.style.opacity="0";setTimeout(()=>e.remove(),400);});if(n==null)bathDrops=[];}
+  function startBath(){if(sleeping){setHint("자고 있어요! 먼저 깨워주세요 😴");return;}
+    bathMode=true;bathStep=0;bathLayer.classList.add("on");foodsEl.style.display="none";
+    setHint(BATH[0].h);say("목욕하자!");}
+  function bathTap(){if(!bathMode)return;const r=selected.el.getBoundingClientRect();const fx=BATH[bathStep].fx;
+    const cx=r.left+r.width/2;
+    if(fx==="soap"){puff("🧼",cx-30,r.bottom-60);for(let i=0;i<4;i++)puff("🫧",cx-40+i*22,r.bottom-50);swish();}
+    else if(fx==="wash"){for(let i=0;i<8;i++)puff("🫧",r.left+r.width*(0.2+Math.random()*0.6),r.top+r.height*(0.5+Math.random()*0.35));swish();selected.api.react();}
+    else if(fx==="shampoo"){for(let i=0;i<6;i++)puff("🫧",cx-40+i*16,r.top+r.height*0.28+Math.random()*20);blip(700,1000,.1,"triangle");}
+    else if(fx==="rinseH"){for(let i=0;i<6;i++)dropFall(cx-40+i*16,r.top+r.height*0.2);swish();addWet(r);}
+    else if(fx==="gel"){for(let i=0;i<6;i++)puff("🫧",r.left+r.width*(0.3+Math.random()*0.4),r.top+r.height*(0.55+Math.random()*0.3));blip(600,900,.1,"triangle");}
+    else if(fx==="rinseB"){for(let i=0;i<7;i++)dropFall(r.left+r.width*(0.25+Math.random()*0.5),r.top+r.height*0.45);swish();addWet(r);}
+    else if(fx==="towel"){const t=puff("🟦",cx-26,r.top+r.height*0.5,"tissue");t.classList.add("scrub");clearWet(Math.ceil(bathDrops.length/2));swish();}
+    else if(fx==="dry"){for(let i=0;i<6;i++)puff("💨",r.left+r.width*(0.15+Math.random()*0.7),r.top+r.height*(0.3+Math.random()*0.4));clearWet();selected.api.react();}
+    bathStep++;
+    if(bathStep>=BATH.length){finishBath();} else setHint(BATH[bathStep].h);
+  }
+  function finishBath(){bathMode=false;bathLayer.classList.remove("on");clearWet();
+    const r=selected.el.getBoundingClientRect();hearts(r.left+r.width/2,r.top+r.height*0.4);
+    chime();selected.api.react();bubble("뽀송뽀송! ✨",r.left+r.width/2,r.top+r.height*0.3);
+    setHint(selected.name+" 뽀송뽀송 깨끗해졌어요! ✨🛁");earnSticker();updateUI();}
+  bathLayer.addEventListener("click",bathTap);
+  function bath(){startBath();}
 
   // ---- 꾸미기 (accessories) ----
   const ACCS=[["",0],["👒",2],["🎀",1],["🕶️",33],["👑",-2],["🧢",1],["🎩",-4],["🌸",2],["🦋",-2],["👓",33],["⭐",-4],["🐝",-2]];
